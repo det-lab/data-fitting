@@ -1,17 +1,12 @@
-# Welcome to MkDocs
-
-For full documentation visit [mkdocs.org](https://www.mkdocs.org).
-
-## Commands
-
-* `mkdocs new [dir-name]` - Create a new project.
-* `mkdocs serve` - Start the live-reloading docs server.
-* `mkdocs build` - Build the documentation site.
-* `mkdocs -h` - Print help message and exit.
+# Data Fitting Lesson
+**Created by Adrian Fisher**
 
 ## Project layout
 
     mkdocs.yml    # The configuration file.
     docs/
         index.md  # The documentation homepage.
-        ...       # Other markdown pages, images and other files.
+        01_introduction.md # Introduction
+        02_setup.md # Downloading python and Jupyter
+        03_experiment_details.md # Explaining the experiment
+        04_data_analysis.md # Performing the analysis
