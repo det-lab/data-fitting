@@ -9,8 +9,6 @@
       
       
       
-        <link rel="prev" href="../03_experiment_details/">
-      
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -18,7 +16,7 @@
     
     
       
-        <title>Analysis - Fitting Data</title>
+        <title>The Gaussian - Fitting Data</title>
       
     
     
@@ -59,6 +57,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#the-gaussian" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -91,7 +94,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Analysis
+              The Gaussian
             
           </span>
         </div>
@@ -272,17 +275,10 @@
       
   
   
-    
   
   
-  
-    <li class="md-nav__item md-nav__item--active">
-      
-      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
-      
-      
-      
-      <a href="./" class="md-nav__link md-nav__link--active">
+    <li class="md-nav__item">
+      <a href="../04_data_analysis.md" class="md-nav__link">
         
   
   
@@ -293,7 +289,6 @@
   
 
       </a>
-      
     </li>
   
 
@@ -315,6 +310,8 @@
   
   
   
+    
+  
   
 </nav>
                   </div>
@@ -330,9 +327,42 @@
 
 
 
-  <h1>Analysis</h1>
-
-
+<h1 id="the-gaussian">The Gaussian</h1>
+<p>Now that we have isolated our peak data, we can create a function which will help us find the parameters which describe it. For this, we'll first need to understand the equation that relates to it, here known as a <strong>Gaussian</strong> (or <strong>Normal</strong>) <strong>Distribution</strong>, which has the form:
+<span class="arithmatex">\(<span class="arithmatex">\(f(x)=\frac{1}{\sqrt{2\pi \sigma^2}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}+D\)</span>\)</span>
+A Gaussian distribution describes a symmetric, bell-shaped curve centered at a mean value, <span class="arithmatex">\(\mu\)</span> (or mu), with its width determined by the standard deviation, <span class="arithmatex">\(\sigma\)</span> (or sigma), and its offset above the x-axis given by <strong>D</strong> (called the y-offset). </p>
+<p>In gamma spectroscopy, we are using the Gaussian as a model for how our detected energy counts are spread around the central photopeak. Variations in the emission and detection of our photons have caused the recorded values to "smear" into a normal distribution, with the most common value being the center of the curve. Fitting our data to this curve then allows us to extract the value for the central energy, <span class="arithmatex">\(\mu\)</span>, as well as its margin of error.</p>
+<p>In our equation, the first term (<span class="arithmatex">\(\frac{1}{\sqrt{2\pi \sigma^2}}\)</span>) is called the <strong>normalization constant</strong>. Its purpose is to set the value of the integral of our curve to be equal to 1, meaning 100% of the data fits under the curve, but this term can actually be dropped for our purposes. We can thus set our equation to be equal to:
+<span class="arithmatex">\(<span class="arithmatex">\(f(x)=A \cdot e^{-\frac{(x-\mu)^2}{2\sigma^2}}+D\)</span>\)</span>
+In this equation:</p>
+<ul>
+<li>
+<p>A controls the <strong>height</strong>/<strong>amplitude</strong> of the peak</p>
+</li>
+<li>
+<p><span class="arithmatex">\(\mu\)</span> is the <strong>mean value</strong> in the <strong>center</strong> (the energy of the photon)</p>
+</li>
+<li>
+<p><span class="arithmatex">\(\sigma\)</span> relates to the standard deviation</p>
+</li>
+<li>
+<p>D is the y-offset.</p>
+</li>
+</ul>
+<p>In order to get started using <code>curve_fit</code>, we'll first have to create a function for this equation which we will then be able to use later. So, let's create a <code>gaussian</code> function which simply returns our equation <span class="arithmatex">\(f(x)\)</span>:</p>
+<pre><code class="language-python">def gaussian(x, amplitude, mu, sigma, y_offset):
+    return amplitude * np.exp(-((x-mu)**2) / (2 * sigma**2)) + y_offset
+</code></pre>
+<p>Additionally, our data will include some peaks which are so close to each other that they actually <strong>overlap</strong>. Overlapping peaks are common when two gamma emissions have close energies. This can be modelled using the equation:
+<span class="arithmatex">\(<span class="arithmatex">\(f(x)=A_1 \cdot e^{-\frac{(x-\mu_1)^2}{2\sigma^2_1}}+A_2 \cdot e^{-\frac{(x-\mu_2)^2}{2\sigma^2_2}}+...+A_n \cdot e^{-\frac{(x-\mu_n)^2}{2\sigma^2_n}}+D\)</span>\)</span>
+Where <code>n</code> is given by the number of overlapping peaks. Luckily, our data shouldn't include more than two overlapping peaks, so we can create the second function:</p>
+<pre><code class="language-python">def double_gaussian(x, amp_1, mu_1, sigma_1, amp_2, mu_2, sigma_2, y_offset):
+    return (
+        amp_1 * np.exp(-((x-mu_1)**2) / (2 * sigma_1)**2) 
+        + (amp_2 * np.exp(-((x-mu_2)**2) / (2 * sigma_2)**2)) 
+        + y_offset
+    )
+</code></pre>
 
 
 
