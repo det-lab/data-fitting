@@ -69,6 +69,7 @@ Altogether, this plot shows:
 * And finally, the two true photopeaks of Cobalt-60 on the far right.
 
 Now that we understand the features of our plot, let's move forward to isolating our peaks.
+
 # Isolating the Photopeaks
 There are two main methods that can be used to find our peaks: 
 
@@ -81,6 +82,7 @@ Before attempting either of these methods, let's edit our `plot_data` function t
 cobalt = plot_data("raw-data/Co60.csv", y_log=True)
 ```
 Now we can use the `cobalt` variable to find our peaks. Let's start by demonstrating how to use `find_peaks`.
+
 ## `find_peaks`
 In order to automatically find our peaks, we'll first want to assign  `cobalt`'s x- and y-axes to variables so that we can plot them again along with our peaks. The result that we're looking for is to have one selected point at the top of our two right peaks.
 
@@ -139,6 +141,7 @@ co_peak_one = peak_ranges[0]
 co_peak_two = peak_ranges[1]
 ```
 While `find_peaks` is generally very powerful, it requires careful tuning of multiple parameters. It is also possible to run into plots where the peaks that you see can't easily be distinguished from noise using this module, or where it is impossible to set the parameters to include all peaks, such as when two peaks overlap with each other while others are distinct. For these instances, it may be better to use another method for isolating your peaks.
+
 ## Visual inspection
 While it may not be programmatically optimized, one of the easier ways to isolate peaks is by eye: simply estimate where the boundaries of the peaks are and use those numbers to splice the plot. If it's off - adjust your numbers until the peaks are as close to centered as you can get them. If you plot your estimates as you go, you will also be contracting what's shown of the x-axis, providing you with new tick marks which can help you splice more accurately.
 
