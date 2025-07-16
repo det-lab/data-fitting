@@ -1,5 +1,7 @@
 # Setup
-This lesson will be using Python 3 along with one of its more common scientific libraries: `scipy`. This lesson will be using a Jupyter Notebook. First, it'll be necessary to install python if you don't already have it. You can follow the instructions from [python's official website](https://realpython.com/installing-python/) to get started. 
+This lesson will be using Python 3 along with several of its more common libraries: `scipy`, `pandas`, `matplotlib`, and `numpy`. This lesson will also be done using a Jupyter Notebook. 
+
+First, it'll be necessary to install Python if you don't already have it. You can follow the instructions from [python's official website](https://realpython.com/installing-python/) in order to get started. 
 
 It's recommended to install Jupyter Notebook through `pip`, so after installing Python you should check that it comes with `pip` installed. This can be done by running the following commands depending on your operating system:
 
@@ -30,14 +32,14 @@ It should be noted that in order for Jupyter to work you will also be required t
 
 Running one of these commands will then open Jupyter in a browser. 
 
-Jupyter will then show you an in-browser version of your file-explorer where you can navigate to create a new project folder to follow along with this lesson. First, make sure that you also have the necessary libraries installed as well. Click on `New` and select `Terminal` in order to ensure that the libraries are installed. From this terminal, run the commands:
+Jupyter will then show you an in-browser version of your file-explorer where you can navigate to create a new project folder to follow along with this lesson. Before doing that, make sure that you also have the necessary libraries installed. Click on `New` and select `Terminal` in order to ensure that the libraries are installed in the same location that Jupyter has access to. From this terminal, run the commands:
 ```bash
 pip install scipy
 pip install pandas
 pip install matplotlib
 pip install numpy
 ```
-The `pandas` library will be used for loading the `.csv` data, the `matplotlib` library will be used to plot the data, and `numpy` will be used for multiple mathematical expressions. 
+The `scipy` library will be used to find our peaks and create our curve fits, `pandas` will be used for loading the `.csv` data, `matplotlib` will be used to plot the data, and `numpy` will be used for multiple mathematical expressions.
 
 Next, create a folder to house your project files, named something like "data-fitting". After doing this, download and unzip [these raw data files](raw-data/raw-data.zip). Then, you can move the "raw-data" folder into your project folder. 
 
