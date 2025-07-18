@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from scipy.optimize import curve_fit
 from scipy.signal import find_peaks
+from scipy.stats import linregress, chi2
 ```
 As a last step before plotting, we'll want to inspect our `.csv` files to see which rows and columns we're able to use. Here's what the first several lines of the file `Co60.csv` contain:
 
@@ -15,16 +16,14 @@ As a last step before plotting, we'll want to inspect our `.csv` files to see wh
 
 As you can see here, rows 1 through 18 contain extraneous data related to the program settings when the data was collected, such as the voltage, fine and coarse grain values, the time and date that the data was collected, and so on. It isn't until row 23 that we start getting actual data points, with row 22 telling us the column names. We can also see that only the first and third columns (Channel & Counts) contain data, with the second column (Energy) being empty. These facts hold true across all of our files, so we can skip the same rows and only use the same columns across all of our data.
 
-For much of our data, it will also be easier to find our peaks if we set the y-axis to use a logarithmic scale. Let's get started by creating a method which will load and plot our data when given the file path, and which will also have an option to allow us to control how the y-axis is scaled:
+For much of our data, it will also be easier to find our peaks if we set the y-axis on a logarithmic scale. Let's get started by creating a method which will load and plot our data when given a file path, and which will also have an option to allow us to control how the y-axis is scaled:
 ```python
-def plot_data(filepath, y_log=True):
-    data = pd.read_csv(filepath, skiprows=21, usecols=[0,2])
-    # Remove "raw-data/" and ".csv" for naming
-    filename = filepath[9:-4]
+def plot_data(isotope, y_log=True):
+    data = pd.read_csv(f'raw-data/{isotope}.csv', skiprows=21, usecols=[0,2])
     # Assign axes and names
     x_axis = data.iloc[:,0]
     x_name = data.columns[0]
-
+    
     y_axis = data.iloc[:,1]
     y_name = data.columns[1]
 
@@ -32,15 +31,17 @@ def plot_data(filepath, y_log=True):
     plt.scatter(x_axis, y_axis, s=1)
     plt.xlabel(x_name)
     plt.ylabel(y_name)
-    plt.title(f"{filename} raw data")
-    plt.savefig(f"{filename}_raw_data.png")
+    plt.title(f"{isotope} raw data")
+    plt.savefig(f"{isotope}_raw_data.png")
     if y_log:
         plt.yscale('log')
     plt.show()
+
+    return data
 ```
 You can then use this method along with a filepath to create a plot of the recorded data:
 ```python
-plot_data("raw-data/Co60.csv", y_log=True)
+plot_data("Co60.csv", y_log=True)
 ```
 **Output:**
 
@@ -68,30 +69,30 @@ Altogether, this plot shows:
 
 * And finally, the two true photopeaks of Cobalt-60 on the far right.
 
-Now that we understand the features of our plot, let's move forward to isolating our peaks.
+Now that we understand the features of our plot, let's move forward to selecting our peaks.
 
-# Isolating the Photopeaks
+# Selecting the Photopeaks
 There are two main methods that can be used to find our peaks: 
 
-1. Using the `find_peaks` module
+1. Using the `find_peaks` module in `scipy`
 
 2. Visually inspecting the data.
 
-Before attempting either of these methods, let's edit our `plot_data` function to return the `data` variable so that we can manipulate it elsewhere. At the end of the function, simply add `return data`. Then, when you call the function, you can set `data` to a new variable, turning our function call into:
+Before attempting either of these methods, let's edit our `plot_data` function to return the `data` variable so that it can be saved and used elsewhere. At the end of the function, simply add `return data`. Then, when you call the function, you can set `data` to a new variable, turning our function call into:
 ```python
-cobalt = plot_data("raw-data/Co60.csv", y_log=True)
+Co_60 = plot_data("Co60.csv", y_log=True)
 ```
-Now we can use the `cobalt` variable to find our peaks. Let's start by demonstrating how to use `find_peaks`.
+Now we can use the `Co_60` variable to find our peaks. Let's look at the process for using `find_peaks` first.
 
 ## `find_peaks`
-In order to automatically find our peaks, we'll first want to assign  `cobalt`'s x- and y-axes to variables so that we can plot them again along with our peaks. The result that we're looking for is to have one selected point at the top of our two right peaks.
+In order to find our peaks with this method, we'll first want to assign  `Co_60`'s x- and y-axes to variables so that we can plot them underneath our peak finding. The result that we're looking for is to have one selected point at the top of our two right peaks.
 
-The `find_peaks` module can take as optional parameters: height, threshold, distance, prominence, width, wlen, rel_height, and plateu_size. Locating the peaks will require careful manipulation of these values in order to exclude noise. For more complete descriptions of these parameters, [click here to go to the official documentation.](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.find_peaks.html)
+The `find_peaks` module can take as optional parameters: `height`, `threshold`, `distance`, `prominence`, `width`, `wlen`, `rel_height`, and `plateu_size`. Locating the peaks will require careful manipulation of these values in order to exclude noise. For more complete descriptions of these parameters, [click here to go to the official documentation.](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.find_peaks.html)
 
-Without assigning any of these parameters a value, `find_peaks` selects indices in the data that are preceeded by and followed by smaller values. It returns them along with a dictionary which contains the values **it calculated** for the optional parameters (heights, thresholds, prominences, etc). To show what this looks like, let's plot our data without first trying to optimize to find our peaks:
+Without assigning any of these parameters a value, `find_peaks` selects indices in the data that are preceeded by and followed by smaller values. It returns them along with a dictionary which contains the values **it calculates** for the optional parameters (heights, thresholds, prominences, etc). To show what this looks like, let's plot our data underneath the found peaks without first changing any parameters:
 ```python
-x_values = cobalt.iloc[:,0] # Select first column
-y_values = cobalt.iloc[:,1] # Select second column
+x_values = Co_60.iloc[:,0]
+y_values = Co_60.iloc[:,1]
 peaks, properties = find_peaks(y_values)
 plt.scatter(x_values, y_values, s=1)
 plt.plot(peaks, y_values[peaks], 'x', color='red')
@@ -101,10 +102,10 @@ plt.show()
 
 ![first peak find](images/first_peak_find.png)
 
-Each one of the plotted 'x's is being counted as a 'peak'. So, to narrow down our choices, let's start trying to estimate the other arguments. Let's try adjusting `distance`, `prominence`, and `width`. The distance argument sets the minimum distance that should exist between two peaks. The prominence argument measures the vertical distance between the top of the peak and the lowest contour line that doesn't enclose a higher peak (as opposed to height which measures the distance from the top of the peak to y=0). The width argument measures the horizontal span of a single peak. Let's estimate these values at `150`, `100`, and `60` respectively:
+Each one of the plotted 'x's is being counted as a 'peak'. So, to narrow down our choices, let's start trying to estimate the parameters. Let's try adjusting `distance`, `prominence`, and `width`. The distance argument sets the minimum distance that should exist between two peaks. The `prominence` argument measures the vertical distance between the top of the peak and the lowest contour line that doesn't enclose a higher peak (as opposed to `height` which measures the distance from the top of the peak to y=0). The width argument measures the horizontal span of a single peak. If we provide an estimate for these values at `150`, `100`, and `60` respectively, we'll be able to select out the two peaks we want:
 ```python
-x_values = cobalt.iloc[:,0]
-y_values = cobalt.iloc[:,1]
+x_values = Co_60.iloc[:,0]
+y_values = Co_60.iloc[:,1]
 peaks, _ = find_peaks(y_values, distance=150, prominence=100, width=60)
 plt.plot(x_values, y_values)
 plt.plot(peaks, y_values[peaks], 'x', color='red')
@@ -114,13 +115,13 @@ plt.show()
 
 ![filtered peaks](images/filtered_peaks.png)
 
-Now, we'll have to save the data around the peaks. This can be done with a for loop where we select a number of points on either side of the peak, extract that portion of the dataset, and store it for later use. We'll also include safeguards to ensure we don't go outside of the bounds of the data:
+Now, we'll have to save the data around the peaks. This can be done with a `for loop` where we select a number of points on either side of the peak, extract that portion of the dataset, and store it for later use. We'll also include safeguards to ensure we don't go outside of the bounds of the data:
 ```python
 peak_ranges = []
 for peak in peaks:
     left=max(0, peak-60)
     right=min(len(y_values)-1, peak + 60)
-    peak_ranges.append(cobalt.iloc[left:right].copy())
+    peak_ranges.append(Co_60.iloc[left:right].copy())
 ```
 Each entry in `peak_ranges` now holds a slice of data centered around one of the detected peaks. We can plot each of these slices to visually confirm that the correct regions were captured:
 ```python
@@ -135,19 +136,21 @@ plt.show()
 
 ![found peaks](images/find_peaks_finished.png)
 
+This also highlights one of the shortcomings of the `find_peaks` function. As we can see with the peak on the left, our selection won't necessarily be centered. It found the highest point in the left peak, which happens to be an outlier for the relevant data, and assumes that this point is the center of the peak.
+
 You could then set each peak to a new variable so that it can be used in the next section by using:
 ```python
-co_peak_one = peak_ranges[0]
-co_peak_two = peak_ranges[1]
+Co_60P1 = peak_ranges[0]
+Co_60P2 = peak_ranges[1]
 ```
-While `find_peaks` is generally very powerful, it requires careful tuning of multiple parameters. It is also possible to run into plots where the peaks that you see can't easily be distinguished from noise using this module, or where it is impossible to set the parameters to include all peaks, such as when two peaks overlap with each other while others are distinct. For these instances, it may be better to use another method for isolating your peaks.
+While `find_peaks` is generally very powerful, it requires careful tuning of multiple parameters. It is also possible to run into plots where the peaks that you see can't easily be distinguished from noise using this module, or where it is impossible to set the parameters to include all peaks, such as when two peaks overlap with each other while others are distinct. There are work arounds for these issues, but it may be better to use another method for isolating your peaks depending on which problems you're running into.
 
 ## Visual inspection
-While it may not be programmatically optimized, one of the easier ways to isolate peaks is by eye: simply estimate where the boundaries of the peaks are and use those numbers to splice the plot. If it's off - adjust your numbers until the peaks are as close to centered as you can get them. If you plot your estimates as you go, you will also be contracting what's shown of the x-axis, providing you with new tick marks which can help you splice more accurately.
+While it may not be programmatically optimized, one of the easier ways to isolate peaks is by eye: simply estimate where the boundaries of the peaks are and use those numbers to splice the plot. If it's off - adjust your numbers until the peaks are as close to centered as you can get them. If you plot your estimates as you go, you will also be contracting what's shown of the x-axis, providing you with new tick marks with less distance between them, allowing you to splice more accurately.
 
 Let's try:
 ```python
-co_peak_one = cobalt.iloc[1600:1900].copy()
+Co_60P1 = Co_60.iloc[1600:1900].copy()
 plt.scatter(co_peak_one.columns[0], co_peak_one.columns[1], s=1)
 plt.show()
 ```
@@ -161,8 +164,8 @@ This isn't perfect, but makes it easier to find the appropriate limits. To cente
 
 Nice! Now we can use the same process to isolate our second peak, giving us:
 ```python
-co_peak_two = cobalt.iloc[1850:2025].copy()
-plt.scatter(co_peak_two.iloc[:,0], co_peak_two.iloc[:,1], s=1)
+Co_60P2 = Co_60.iloc[1850:2025].copy()
+plt.scatter(Co_60P2.iloc[:,0], Co_60P2.iloc[:,1], s=1)
 plt.show()
 ```
 **Output:**
