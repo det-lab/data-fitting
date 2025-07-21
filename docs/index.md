@@ -1,15 +1,8 @@
-# Data Fitting Lesson
-**Created by Adrian Fisher**
+# Introduction
+Curve fitting is one of the most powerful tools available to us in modern computing. Curve fitting describes the process of matching multiple data points with an equation while finding terms to describe the margins of error and other unknown parameters. 
 
-## Project layout
+In this lesson, we're going to use curve fitting along with gamma spectroscopy data taken at the University of Colorado Denver in order to demonstrate the usefulness of the operation. The data will include 6 radioactive isotopes with known emission spectra as well as a 7th and final unknown isotope. In the process, we will learn how to create a function which can fit a Gaussian curve before using the findings from our fits to find a final line which can help us determine the properties of the unknown isotope. We will also then learn about $\chi^2$-fits and use one to determine how well our data fits the solution we find for the unknown isotope.
 
-    mkdocs.yml    # The configuration file.
-    docs/
-        index.md  # The documentation homepage.
-        01_introduction.md # Introduction
-        02_setup.md # Downloading python and Jupyter
-        03_experiment_details.md # Explaining the experiment
-        04_isolating_peaks.md # Getting peaks out of data
-        05_fitting_curves.md # Doing first curve fits
-        06_linregress.md # Fitting sources to a line
-        07_chi_squared.md # Finding best isotope fit
+--- 
+
+Let's get started - [click here to continue on to the next section](01_setup.md) where we will begin setting up our computers.

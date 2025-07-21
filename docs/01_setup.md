@@ -47,4 +47,4 @@ Finally, create a new notebook by clicking on `New` and `Notebook` and selecting
 
 ---
 
-Now that we're all setup, [click here to continue to the next section](03_experiment_details.md) where we can begin to learn more about the experiment and how it functions before getting started fitting our data.
+Now that we're all setup, [click here to continue to the next section](02_experiment_details.md) where we can begin to learn more about the experiment and how it functions before getting started fitting our data.

@@ -1,13 +1,12 @@
 site_name: Fitting Data
 nav:
-  - Home: index.md
-  - Introduction: 01_introduction.md
-  - Setup: 02_setup.md
-  - Experiment: 03_experiment_details.md
-  - Initial Plotting: 04_isolating_peaks.md
-  - First fits: 05_fitting_curves.md
-  - Line Fit: 06_linregress.md
-  - Chi Squared Fits: 07_chi_squared.md
+  - Introduction: index.md
+  - Setup: 01_setup.md
+  - Experiment: 02_experiment_details.md
+  - Initial Plotting: 03_isolating_peaks.md
+  - First fits: 04_fitting_curves.md
+  - Line Fit: 05_linregress.md
+  - Chi Squared Fits: 06_chi_squared.md
 
 theme: 
   name: material

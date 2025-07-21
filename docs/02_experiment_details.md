@@ -7,7 +7,7 @@ Starting from the element bismuth, every element and every isotope is at least s
 
 ### Alpha ($\alpha$) Decay
 
-This type of decay releases a postively charged **alpha particle** (sometimes represented as $^4_2\alpha$), consisting of two protons and two neutrons (a helium nucleus) being ejected from the atom, reducing its atomic number by two. It is also the least penetrating of these forms of radiation and can be stopped by just a few centimeters of air, but it has the power to be the most ionizing and destructive of the types we'll cover here. 
+This type of decay releases a positively charged **alpha particle** (sometimes represented as $^4_2\alpha$), consisting of two protons and two neutrons (a helium nucleus) being ejected from the atom, reducing its atomic number by two. It is also the least penetrating of these forms of radiation and can be stopped by just a few centimeters of air, but it has the power to be the most ionizing and destructive of the types we'll cover here. 
 
 Because of the low penetrating power of alpha particles, they are generally only harmful to life if the radioactive source is swallowed, inhaled, or held closely to the body for prolonged periods of time.
 
@@ -31,7 +31,7 @@ Now that we've gone over the different types of radiation, let's go over how we 
 ## Scintillator
 The scintillator is the first step in our instrumentation. These devices utilize the properties of certain materials to **luminesce** when excited by radiation, causing them to **re-emit** light at a lower and more easily detectable wavelength. For gamma ray detection, photons **Compton scatter** off of electrons in the structure of the scintillator. 
 
-Compton scattering describes the effect where high-energy photons interact with loosely-bound valence shell electrons, giving them enough energy to be released from their atoms and ionizing the atom in the process. Those free electrons can then scatter off of other electrons, spreading the energy of the inital gamma ray across multiple electrons. As each of these electrons relax and are recaptured by the ionized atoms, they then release photons at a lower energy.
+Compton scattering describes the effect where high-energy photons interact with loosely-bound valence shell electrons, giving them enough energy to be released from their atoms and ionizing the atom in the process. Those free electrons can then scatter off of other electrons, spreading the energy of the initial gamma ray across multiple electrons. As each of these electrons relax and are recaptured by the ionized atoms, they then release photons at a lower energy.
 
 It is by this process that one high energy gamma ray can be turned into several lower energy photons which can then be detected using the second instrument in the experiment.
 ## Photomultiplier Tube (PMT)
@@ -57,4 +57,4 @@ So, in order to determine what element our unknown radioactive source is, it wil
 
 ---
 
-Let's get going, then! [Click here to continue to the next section](04_isolating_peaks.md) where we'll get started by isolating the photopeaks in our data.
+Let's get going, then! [Click here to continue to the next section](03_isolating_peaks.md) where we'll get started by isolating the photopeaks in our data.

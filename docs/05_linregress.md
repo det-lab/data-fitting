@@ -205,4 +205,4 @@ As this information provides us with no overlapping options, this means that we 
 
 ---
 
-In order to perform this final analysis, we'll need to perform something known as a $\chi^2$ (or **chi-squared**) fit. [Click here to continue on to our next section](07_chi_squared.md) where we will learn how to use such fits to find the quality of our data fits.
+In order to perform this final analysis, we'll need to perform something known as a $\chi^2$ (or **chi-squared**) fit. [Click here to continue on to our next section](06_chi_squared.md) where we will learn how to use such fits to find the quality of our data fits.

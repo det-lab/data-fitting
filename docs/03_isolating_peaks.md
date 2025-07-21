@@ -47,17 +47,17 @@ plot_data("Co60.csv", y_log=True)
 
 ![Co60 Raw](images/Co60_raw_data.png)
 
-## Interpretting the Plot
+## Interpreting the Plot
 In order to properly calibrate our data, it's necessary that we fully understand what the raw data is telling us. In this case, it's important to know first that Cobalt-60 has two peak emission spectra: one at **1.175 MeV**, and another at **1.333 MeV**. However, in this plot, there appear to be **at least** 3 separate peaks: 1 on the far left, and 2 on the far right of the plot, and 2 bumps which could possibly be considered peaks between them. So, how do we know which ones to consider?
 
 ### Compton Scattering
-In gamma spectrscopy, not every gamma photon deposits its full energy into the detector. As mentioned previously, the scintillator steps down the photon energies in a process known as **Compton scattering**, where the photon transfers its energy to an electron. In this process, it is possible for only a fraction of the photon's energy to be absorbed by the electron it's incident upon, with the total deposited energy being reliant on the scattering angle. Between the leftmost and rightmost peaks in the plot, you can see a gently sloping distribution. This is known as the **Compton plateau** or **Compton continuum**.
+In gamma spectroscopy, not every gamma photon deposits its full energy into the detector. As mentioned previously, the scintillator steps down the photon energies in a process known as **Compton scattering**, where the photon transfers its energy to an electron. In this process, it is possible for only a fraction of the photon's energy to be absorbed by the electron it's incident upon, with the total deposited energy being reliant on the scattering angle. Between the leftmost and rightmost peaks in the plot, you can see a gently sloping distribution. This is known as the **Compton plateau** or **Compton continuum**.
 
 The upper limit of partial energy deposition forms what's called the **Compton edge** (or **Compton cliff**): a relatively sharp drop at the high-energy end of the Compton continuum. In the plot for Cobalt-60, this can be seen just before the peaks on the right hand side. The energy of this edge corresponds to the maximum energy that a photon can transfer in a single Compton scattering event, which occurs when it's backscattered $180^\circ$ - when the photon goes straight up in the detector, deposits a significant fraction of its energy, and is then reflected directly away. The smaller "bumps" before the main peaks are not true photopeaks, but part of the backscatter pattern.
 
 The **far-left** peak is most likely the result of backscatter radiation as well. Backscatter peaks arise when gamma photons scatter off of nearby objects, such as the detector housing or lab walls, and then re-enter the detector with significantly reduced energy. These photons can produce a small but distinct peak at lower channels, well below the main Compton continuum. 
 
-It's important to understand that the Compton edge only shows the maximum for **partial energy loss**, not the **maximum possible energy** that can be detected. Past the edge, a photon gets closer to being fully absorbed by the scintillator, meaning everything before the furthest right peaks represents events where the photon is at least partially reflected out of the detector, and the centers of the peaks represent where all of the photon's energy is absorbed by the scintillator and passed on to the PMT. Every true photopeak should be preceeded by a Compton continuum and edge. As our photopeaks are so near each other in our Co-60 data, their respective Compton features overlap.
+It's important to understand that the Compton edge only shows the maximum for **partial energy loss**, not the **maximum possible energy** that can be detected. Past the edge, a photon gets closer to being fully absorbed by the scintillator, meaning everything before the furthest right peaks represents events where the photon is at least partially reflected out of the detector, and the centers of the peaks represent where all of the photon's energy is absorbed by the scintillator and passed on to the PMT. Every true photopeak should be preceded by a Compton continuum and edge. As our photopeaks are so near each other in our Co-60 data, their respective Compton features overlap.
 
 Altogether, this plot shows:
 
@@ -89,7 +89,7 @@ In order to find our peaks with this method, we'll first want to assign  `Co_60`
 
 The `find_peaks` module can take as optional parameters: `height`, `threshold`, `distance`, `prominence`, `width`, `wlen`, `rel_height`, and `plateu_size`. Locating the peaks will require careful manipulation of these values in order to exclude noise. For more complete descriptions of these parameters, [click here to go to the official documentation.](https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.find_peaks.html)
 
-Without assigning any of these parameters a value, `find_peaks` selects indices in the data that are preceeded by and followed by smaller values. It returns them along with a dictionary which contains the values **it calculates** for the optional parameters (heights, thresholds, prominences, etc). To show what this looks like, let's plot our data underneath the found peaks without first changing any parameters:
+Without assigning any of these parameters a value, `find_peaks` selects indices in the data that are preceded by and followed by smaller values. It returns them along with a dictionary which contains the values **it calculates** for the optional parameters (heights, thresholds, prominences, etc). To show what this looks like, let's plot our data underneath the found peaks without first changing any parameters:
 ```python
 x_values = Co_60.iloc[:,0]
 y_values = Co_60.iloc[:,1]
@@ -174,4 +174,4 @@ plt.show()
 
 ---
 
-Now that we have our first peaks isolated, [click here to continue on to the next section](05_fitting_curves.md) where we'll learn how to fit our data to curves.
+Now that we have our first peaks isolated, [click here to continue on to the next section](04_fitting_curves.md) where we'll learn how to fit our data to curves.

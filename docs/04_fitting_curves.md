@@ -176,4 +176,4 @@ This is where you'll store variables for each of the remaining files emission pe
 
 ---
 
-After we have performed this process for the remaining files, we'll have successfully extracted the mean channel numbers ($\mu$) for every detected emission peak. From there, we can begin the process of fitting our data to a straight line. [Click here to continue to the next section](06_linregress.md) where we will look at how to plot all of our data as well as label it and include our margins of error.
+After we have performed this process for the remaining files, we'll have successfully extracted the mean channel numbers ($\mu$) for every detected emission peak. From there, we can begin the process of fitting our data to a straight line. [Click here to continue to the next section](05_linregress.md) where we will look at how to plot all of our data as well as label it and include our margins of error.
