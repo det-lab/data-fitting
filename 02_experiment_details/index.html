@@ -9,10 +9,10 @@
       
       
       
-        <link rel="prev" href="../02_setup/">
+        <link rel="prev" href="../01_setup/">
       
       
-        <link rel="next" href="../04_isolating_peaks/">
+        <link rel="next" href="../03_isolating_peaks/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -199,28 +199,6 @@
   
   
   <span class="md-ellipsis">
-    Home
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../01_introduction/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
     Introduction
     
   </span>
@@ -238,7 +216,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../02_setup/" class="md-nav__link">
+      <a href="../01_setup/" class="md-nav__link">
         
   
   
@@ -366,7 +344,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../04_isolating_peaks/" class="md-nav__link">
+      <a href="../03_isolating_peaks/" class="md-nav__link">
         
   
   
@@ -388,12 +366,56 @@
   
   
     <li class="md-nav__item">
-      <a href="../05_fitting_curves/" class="md-nav__link">
+      <a href="../04_fitting_curves/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
     First fits
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05_linregress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Line Fit
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06_chi_squared/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chi Squared Fits
     
   </span>
   
@@ -493,7 +515,7 @@
 <p>There are three main types of radioactive decay associated with emissions, alpha (<span class="arithmatex">\(\alpha\)</span>), beta (<span class="arithmatex">\(\beta\)</span>), and gamma (<span class="arithmatex">\(\gamma\)</span>), named in increasing order of their ability to penetrate matter (<span class="arithmatex">\(\gamma &gt; \beta &gt; \alpha\)</span>). These three types of emissions are notable also for their ability to be separated from each other from inside of an electromagnetic field - meaning they all have different types of <strong>charge</strong>. </p>
 <p>Starting from the element bismuth, every element and every isotope is at least slightly radioactive. In other words, there are no stable isotopes after bismuth. From bismuth up, the strong force which holds the nucleus together struggles to reach across the distance of the nucleus, meaning the electric force which wants the positively charged protons to repel each other causes the nucleus to become unstable. For elements lighter than bismuth, every element has <strong>at least one</strong> stable isotope, but there are still many unstable isotopes such as Carbon-14 or Potassium-40.</p>
 <h3 id="alpha-alpha-decay">Alpha (<span class="arithmatex">\(\alpha\)</span>) Decay</h3>
-<p>This type of decay releases a postively charged <strong>alpha particle</strong> (sometimes represented as <span class="arithmatex">\(^4_2\alpha\)</span>), consisting of two protons and two neutrons (a helium nucleus) being ejected from the atom, reducing its atomic number by two. It is also the least penetrating of these forms of radiation and can be stopped by just a few centimeters of air, but it has the power to be the most ionizing and destructive of the types we'll cover here. </p>
+<p>This type of decay releases a positively charged <strong>alpha particle</strong> (sometimes represented as <span class="arithmatex">\(^4_2\alpha\)</span>), consisting of two protons and two neutrons (a helium nucleus) being ejected from the atom, reducing its atomic number by two. It is also the least penetrating of these forms of radiation and can be stopped by just a few centimeters of air, but it has the power to be the most ionizing and destructive of the types we'll cover here. </p>
 <p>Because of the low penetrating power of alpha particles, they are generally only harmful to life if the radioactive source is swallowed, inhaled, or held closely to the body for prolonged periods of time.</p>
 <blockquote>
 <p>NOTE: Don't do that.</p>
@@ -509,7 +531,7 @@
 <p>Now that we've gone over the different types of radiation, let's go over how we can detect gamma decay experimentally, and then how we can use these detections to calibrate our instruments and determine the properties of an unknown isotope.</p>
 <h2 id="scintillator">Scintillator</h2>
 <p>The scintillator is the first step in our instrumentation. These devices utilize the properties of certain materials to <strong>luminesce</strong> when excited by radiation, causing them to <strong>re-emit</strong> light at a lower and more easily detectable wavelength. For gamma ray detection, photons <strong>Compton scatter</strong> off of electrons in the structure of the scintillator. </p>
-<p>Compton scattering describes the effect where high-energy photons interact with loosely-bound valence shell electrons, giving them enough energy to be released from their atoms and ionizing the atom in the process. Those free electrons can then scatter off of other electrons, spreading the energy of the inital gamma ray across multiple electrons. As each of these electrons relax and are recaptured by the ionized atoms, they then release photons at a lower energy.</p>
+<p>Compton scattering describes the effect where high-energy photons interact with loosely-bound valence shell electrons, giving them enough energy to be released from their atoms and ionizing the atom in the process. Those free electrons can then scatter off of other electrons, spreading the energy of the initial gamma ray across multiple electrons. As each of these electrons relax and are recaptured by the ionized atoms, they then release photons at a lower energy.</p>
 <p>It is by this process that one high energy gamma ray can be turned into several lower energy photons which can then be detected using the second instrument in the experiment.</p>
 <h2 id="photomultiplier-tube-pmt">Photomultiplier Tube (PMT)</h2>
 <p>A PMT is an incredibly sensitive photon detector, and they are normally designed to detect light specifically in the ultraviolet, visible, and near-infrared ranges of the electromagnetic spectrum (which is why we need the scintillator to step-down our high gamma energies).</p>
@@ -525,7 +547,7 @@
 <p>This system is further limited by the geometry of the setup. The radioactive sources are placed underneath the detector and then radiate equally in every direction, meaning only a fraction will interact optimally with the detector. Some of these emissions will hit the detector with a glancing blow, meaning that they'll have less detected energy than the others, while a small amount of photons actually <strong>will</strong> go straight into the detector but will then have much of their energy reflected directly out. This distribution of energies will result in a <strong>Gaussian curve</strong>, where the center of the curve will correspond to the average detected energies of the emitted particles. It will also result in other features which will become visible when plotted which we will go over in the next section, called the <strong>Compton continuum</strong> and the <strong>Compton edge</strong>.</p>
 <p>So, in order to determine what element our unknown radioactive source is, it will be necessary to first perform a curve fit for each one of the peaks detected, and then use the known values for their emissions to perform a second curve fit to relate the channel numbers with their actual energies. </p>
 <hr />
-<p>Let's get going, then! <a href="../04_isolating_peaks/">Click here to continue to the next section</a> where we'll get started by isolating the photopeaks in our data.</p>
+<p>Let's get going, then! <a href="../03_isolating_peaks/">Click here to continue to the next section</a> where we'll get started by isolating the photopeaks in our data.</p>
 
 
 

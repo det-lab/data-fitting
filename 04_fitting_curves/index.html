@@ -9,8 +9,10 @@
       
       
       
-        <link rel="prev" href="../04_isolating_peaks/">
+        <link rel="prev" href="../03_isolating_peaks/">
       
+      
+        <link rel="next" href="../05_linregress/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -60,7 +62,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#the-gaussian" class="md-skip">
+        <a href="#curve_fit" class="md-skip">
           Skip to content
         </a>
       
@@ -197,28 +199,6 @@
   
   
   <span class="md-ellipsis">
-    Home
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../01_introduction/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
     Introduction
     
   </span>
@@ -236,7 +216,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../02_setup/" class="md-nav__link">
+      <a href="../01_setup/" class="md-nav__link">
         
   
   
@@ -258,7 +238,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../03_experiment_details/" class="md-nav__link">
+      <a href="../02_experiment_details/" class="md-nav__link">
         
   
   
@@ -280,7 +260,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../04_isolating_peaks/" class="md-nav__link">
+      <a href="../03_isolating_peaks/" class="md-nav__link">
         
   
   
@@ -327,6 +307,50 @@
   
 
     
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05_linregress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Line Fit
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../06_chi_squared/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Chi Squared Fits
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
   </ul>
 </nav>
                   </div>
@@ -361,10 +385,16 @@
 
 
 
+<h1 id="curve_fit"><code>curve_fit</code></h1>
+<p>The parameters that <code>curve_fit</code> works from are given by the <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.optimize.curve_fit.html">official documentation</a> as: <code>f</code>, <code>xdata</code>, <code>ydata</code>, <code>p0</code>, <code>sigma</code>, <code>absolute_sigma</code>, <code>check_finite</code>, <code>bounds</code>, <code>method</code>, <code>jac</code>, <code>full_output</code>, <code>nan_policy</code>, and <code>**kwargs</code>. Only the first three parameters are required: <code>f</code>, <code>xdata</code>, and <code>ydata</code>, but including the fourth, <code>p0</code>, is often essential for guiding the fit, especially when the function is nonlinear or has multiple parameters. <code>p0</code> defaults to all ones if not specified, but this often fails for more complex models. </p>
+<p>Only these four will be covered here, but feel free to explore the documentation provided if you wish to use everything that <code>curve_fit</code> has to offer.</p>
+<p>Here, <code>f</code> is our model function. This requires the creation of another function which will be called in <code>curve_fit</code>. It is necessary that the first argument that this function takes is the independent variable, which is the x-axis in the case of our data. The other parameters of this function will be the remaining unknown variables of the equation. </p>
+<p><code>xdata</code>, and <code>ydata</code> are exactly what they sound like: the data that you're fitting to the model function.</p>
+<p><code>p0</code> is the initial guess for the unknown variables/parameters of the model function. It is given as an <strong>array</strong> where every guess is listed in the order that their associated parameters are listed in the function definition (i.e. if the function is: <code>def function(x, a, b)</code>, <code>p0</code> would be <code>[a_estimate, b_estimate]</code>). </p>
+<p>Let's get started on creating our model function.</p>
 <h1 id="the-gaussian">The Gaussian</h1>
-<p>Now that we have isolated our peak data, we can create a function which will help us find the parameters which describe it. For this, we'll first need to understand the equation that relates to it, here known as a <strong>Gaussian</strong> (or <strong>Normal</strong>) <strong>Distribution</strong>, which has the form:</p>
+<p>The <strong>Gaussian</strong> (or <strong>Normal</strong>) <strong>Distribution</strong> is a common equation that you'll run into in statistical mechanics. It describes a symmetric, bell-shaped curve centered at a mean value, <span class="arithmatex">\(\mu\)</span> (mu), with its width determined by the standard deviation, <span class="arithmatex">\(\sigma\)</span> (sigma), and its offset above the x-axis given by <strong>D</strong> (called the y-offset). It has the form:</p>
 <div class="arithmatex">\[f(x)=\frac{1}{\sqrt{2\pi \sigma^2}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}+D\]</div>
-<p>A Gaussian distribution describes a symmetric, bell-shaped curve centered at a mean value, <span class="arithmatex">\(\mu\)</span> (or mu), with its width determined by the standard deviation, <span class="arithmatex">\(\sigma\)</span> (or sigma), and its offset above the x-axis given by <strong>D</strong> (called the y-offset). </p>
 <p>In gamma spectroscopy, we are using the Gaussian as a model for how our detected energy counts are spread around the central photopeak. Variations in the emission and detection of our photons have caused the recorded values to "smear" into a normal distribution, with the most common value being the center of the curve. Fitting our data to this curve then allows us to extract the value for the central energy, <span class="arithmatex">\(\mu\)</span>, as well as its margin of error.</p>
 <p>In our equation, the first term (<span class="arithmatex">\(\frac{1}{\sqrt{2\pi \sigma^2}}\)</span>) is called the <strong>normalization constant</strong>. Its purpose is to set the value of the integral of our curve to be equal to 1, meaning 100% of the data fits under the curve, but this term can actually be dropped for our purposes. We can thus set our equation to be equal to:</p>
 <div class="arithmatex">\[f(x)=A \cdot e^{-\frac{(x-\mu)^2}{2\sigma^2}}+D\]</div>
@@ -377,13 +407,13 @@
 <p><span class="arithmatex">\(\mu\)</span> is the <strong>mean value</strong> in the <strong>center</strong> (the energy of the photon)</p>
 </li>
 <li>
-<p><span class="arithmatex">\(\sigma\)</span> relates to the standard deviation</p>
+<p><span class="arithmatex">\(\sigma\)</span> relates to the standard deviation/<strong>thickness</strong> of the "line"</p>
 </li>
 <li>
 <p>D is the y-offset.</p>
 </li>
 </ul>
-<p>In order to get started using <code>curve_fit</code>, we'll first have to create a function for this equation which we will then be able to use later. So, let's create a <code>gaussian</code> function which simply returns our equation <span class="arithmatex">\(f(x)\)</span>:</p>
+<p>Let's create a <code>gaussian</code> function which simply returns our equation <span class="arithmatex">\(f(x)\)</span>:</p>
 <pre><code class="language-python">def gaussian(x, amplitude, mu, sigma, y_offset):
     return amplitude * np.exp(-((x-mu)**2) / (2 * sigma**2)) + y_offset
 </code></pre>
@@ -397,6 +427,119 @@
         + y_offset
     )
 </code></pre>
+<h1 id="using-curve_fit">Using <code>curve_fit</code></h1>
+<p>Now we can <strong>finally</strong> use <code>curve_fit</code> to start extracting values from our data. <code>curve_fit</code> can return five different values, <code>popt</code>, <code>pcov</code>, <code>infodict</code>, <code>mesg</code>, and <code>ier</code>, but only the first two are valuable for our purposes. <code>popt</code> is a one dimensional array containing the optimal parameter values, while <code>pcov</code> contains a 2-D array with the approximate covariance of <code>popt</code>. For the uncertainties, only the square roots of the diagonal values of <code>pcov</code> is needed.</p>
+<p>Let's create a function for each of our gaussian functions which will return <code>popt</code> and <code>pcov</code>. The only difference between these functions will be which equation they call to fit to.</p>
+<pre><code class="language-python">def find_gaussian_values(xdata, ydata, p0):
+    return curve_fit(gaussian, xdata, ydata, p0=p0)
+
+def find_dgaussian_values(xdata, ydata, p0):
+    return curve_fit(double_gaussian, xdata, ydata, p0=p0)
+</code></pre>
+<p>Next, let's create a function which will take our <code>popt</code> and <code>pcov</code> arrays and use them to create a plot of our data against the <strong>line of best fit</strong>. It will be able to take an element name and our emission value in order to title each plot. We can also make it capable of plotting either a gaussian or a double gaussian with a simple <code>True</code>/<code>False</code> flag, and then using an <code>if</code>/<code>else</code> tree to differentiate between the two. It will also print out the found parameters and their uncertainties, as well as return our <span class="arithmatex">\(\mu\)</span> values and their uncertainties so they can be saved and used later:</p>
+<pre><code class="language-python">def plot_best_fit(element, emission_peak, xdata, ydata, popt, pcov, d_gaussian=False):
+    uncertainties = np.sqrt(np.diag(pcov))
+    if not d_gaussian:
+        labels = ['Amplitude', 'Mean', 'Sigma', 'Y-offset']
+    else:
+        labels = ['Amplitude 1', 'Mean 1', 'Sigma 1', 
+                  'Amplitude 2', 'Mean 2', 'Sigma 2',
+                  'Y-offset']
+    if not d_gaussian:
+        mu = popt[1]
+        mu_uncertainty = uncertainties[1]
+    else:
+        mu_1, mu_2 = popt[1], popt[4]
+        mu_1_uncertainty, mu_2_uncertainty = uncertainties[1], uncertainties[4]
+
+    plt.scatter(xdata, ydata, label='Data', marker='.', color='blue')
+    if not d_gaussian:
+        plt.plot(xdata, gaussian(xdata, *popt), label='Best fit', color='red')
+        plt.axvline(mu, color='green', linestyle='-.', label=f'$\mu: {mu:.2f}\pm{mu_uncertainty:.2f}$')
+    else:
+        plt.plot(xdata, double_gaussian(xdata, *popt), label='Best fit', color='red')
+        plt.axvline(mu_1, color='green', linestyle='-.', label=f'$\mu_1: {mu_1:.2f}\pm{mu_1_uncertainty:.2f}$')
+        plt.axvline(mu_2, color='black', linestyle='-.', label=f'$\mu_2: {mu_2:.2f}\pm{mu_2_uncertainty:.2f}$')
+
+    plt.title(f'{element}: {emission_peak} Peak')
+    plt.xlabel('Channel')
+    plt.ylabel('Counts')
+    plt.legend()
+    plt.show()
+
+    print('Best fit parameters:')
+    for name, val, err in zip(labels, popt, uncertainties):
+        print(f'{name}: {val:.2f} +/- {err:.2f}')
+
+    if not d_gaussian:
+        return mu, mu_uncertainty
+    else:
+        return mu_1, mu_1_uncertainty, mu_2, mu_2_uncertainty
+</code></pre>
+<p>With these functions, we can now run our first <code>curve_fit</code>:</p>
+<pre><code class="language-python">p0=[175, 1750, 20, 50]
+
+Co_60P1_popt, Co_60P1_pcov = find_gaussian_values(
+    co_peak_one.iloc[:,0].values, 
+    co_peak_one.iloc[:,1].values, 
+    p0
+    )
+
+Co_60P1_mu, Co_60P1_mu_uncert = plot_best_fit(
+    'Co-60', '1.175 MeV',
+    co_peak_one.iloc[:,0].values, co_peak_one.iloc[:,1].values, 
+    Co_60P1_popt, Co_60P1_pcov
+    )
+</code></pre>
+<p><strong>Output:</strong></p>
+<p><img alt="fitted peak one" src="../images/Co-60_peak1.png" /></p>
+<pre><code class="language-python">Best fit parameters:
+Amplitude: 160.75 +/- 8.62
+Mean: 1747.79 +/- 0.57
+Sigma: 33.09 +/- 2.04
+Y-offset: 54.67 +/- 9.43
+</code></pre>
+<p>And for our second peak:</p>
+<pre><code class="language-python">p0=[150, 1940, 30, 25]
+
+Co_60P2_popt, Co_60P2_pcov = find_gaussian_values(
+    co_peak_two.iloc[:,0].values, 
+    co_peak_two.iloc[:,1].values, 
+    p0
+    )
+
+Co_60P2_mu, Co_60P2_mu_uncert = plot_best_fit(
+    'Co-60', '1.333 MeV',
+    co_peak_two.iloc[:,0].values, co_peak_two.iloc[:,1].values, 
+    Co_60P2_popt, Co_60P2_pcov
+    )
+</code></pre>
+<p><strong>Output:</strong></p>
+<p><img alt="fitted peak two" src="../images/Co-60_peak2.png" /></p>
+<pre><code class="language-python">Best fit parameters:
+Amplitude: 156.96 +/- 3.83
+Mean: 1939.07 +/- 0.43
+Sigma: 39.02 +/- 1.22
+Y-offset: 9.62 +/- 4.18
+</code></pre>
+<p>Awesome! You've completed your first <code>curve_fit</code> and have found the numbers which we can later associate with the radiation energies. This process has also resulted in us setting the variables <code>Co_60P1_mu</code>, <code>Co_60P1_mu_uncert</code>, <code>Co_60P2_mu</code>, and <code>Co_60P2_mu_uncert</code>. </p>
+<p>In order to make our work easier later, let's create a new cell at the bottom of our notebook which we'll use to keep a dictionary of all of our elements, their calculated channel numbers and uncertainties, and their associated emission energies (in keV):</p>
+<pre><code class="language-python">value_bank = {
+    ('Co-60', Co_60P1_mu, Co_60P1_mu_uncert, 1175),
+    ('Co-60', Co_60P2_mu, Co_60P2_mu_uncert, 1333),
+}
+</code></pre>
+<p>This is where you'll store variables for each of the remaining files emission peaks, which will be used in the next section. For reference (if you're interested in attempting to find peak fits before continuing to the next section), here is a table with the provided isotopes and the known emission energies of their photopeaks:
+|Isotope | Energy (keV)                     |
+|--------|----------------------------------|
+|Na-22   |511, 1274.54                      |
+|Mn-54   |834.84                            |
+|Co-57   |122.06                            |
+|Co-60   |1173.23, 1332.49                  |
+|Cd-109  |88.03                             |
+|Ba-133  |81, 276.4, 302.85, 356.01, 383.85 |</p>
+<hr />
+<p>After we have performed this process for the remaining files, we'll have successfully extracted the mean channel numbers (<span class="arithmatex">\(\mu\)</span>) for every detected emission peak. From there, we can begin the process of fitting our data to a straight line. <a href="../05_linregress/">Click here to continue to the next section</a> where we will look at how to plot all of our data as well as label it and include our margins of error.</p>
 
 
 

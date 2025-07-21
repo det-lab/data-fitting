@@ -9,10 +9,8 @@
       
       
       
-        <link rel="prev" href="../01_introduction/">
+        <link rel="prev" href="../05_linregress/">
       
-      
-        <link rel="next" href="../03_experiment_details/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -20,7 +18,7 @@
     
     
       
-        <title>Setup - Fitting Data</title>
+        <title>Chi Squared Fits - Fitting Data</title>
       
     
     
@@ -62,7 +60,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#setup" class="md-skip">
+        <a href="#what-is-a-chi2-fit" class="md-skip">
           Skip to content
         </a>
       
@@ -98,7 +96,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Setup
+              Chi Squared Fits
             
           </span>
         </div>
@@ -199,7 +197,7 @@
   
   
   <span class="md-ellipsis">
-    Home
+    Introduction
     
   </span>
   
@@ -216,12 +214,100 @@
   
   
     <li class="md-nav__item">
-      <a href="../01_introduction/" class="md-nav__link">
+      <a href="../01_setup/" class="md-nav__link">
         
   
   
   <span class="md-ellipsis">
-    Introduction
+    Setup
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../02_experiment_details/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Experiment
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../03_isolating_peaks/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Initial Plotting
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../04_fitting_curves/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    First fits
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../05_linregress/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    Line Fit
     
   </span>
   
@@ -252,79 +338,13 @@
   
   
   <span class="md-ellipsis">
-    Setup
+    Chi Squared Fits
     
   </span>
   
 
       </a>
       
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../03_experiment_details/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Experiment
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../04_isolating_peaks/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    Initial Plotting
-    
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../05_fitting_curves/" class="md-nav__link">
-        
-  
-  
-  <span class="md-ellipsis">
-    First fits
-    
-  </span>
-  
-
-      </a>
     </li>
   
 
@@ -363,71 +383,36 @@
 
 
 
-<h1 id="setup">Setup</h1>
-<p>This lesson will be using Python 3 along with several of its more common libraries: <code>scipy</code>, <code>pandas</code>, <code>matplotlib</code>, and <code>numpy</code>. This lesson will also be done using a Jupyter Notebook. </p>
-<p>First, it'll be necessary to install Python if you don't already have it. You can follow the instructions from <a href="https://realpython.com/installing-python/">python's official website</a> in order to get started. </p>
-<p>It's recommended to install Jupyter Notebook through <code>pip</code>, so after installing Python you should check that it comes with <code>pip</code> installed. This can be done by running the following commands depending on your operating system:</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Linux</th>
-<th>MacOS</th>
-<th>Windows</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Command (Check python)</strong></td>
-<td>python --version</td>
-<td>python --version</td>
-<td>py --version</td>
-</tr>
-<tr>
-<td><strong>Output</strong></td>
-<td>Python 3.N.N</td>
-<td>Python 3.N.N</td>
-<td>Python 3.N.N</td>
-</tr>
-<tr>
-<td><strong>Command (Check pip)</strong></td>
-<td>python -m pip --version</td>
-<td>python -m pip --version</td>
-<td>py -m pip --version</td>
-</tr>
-<tr>
-<td><strong>Output</strong></td>
-<td>pip X.Y.Z from (python 3.N.N)</td>
-<td>pip X.Y.Z from (python 3.N.N)</td>
-<td>pip X.Y.Z from (python 3.N.N)</td>
-</tr>
-</tbody>
-</table>
-<p>You can then use <code>pip</code> to install either <code>JupyterLab</code> or <code>Jupyter Notebook</code> with the command:</p>
-<pre><code class="language-bash">pip install jupyterlab
+<h1 id="what-is-a-chi2-fit">What is a <span class="arithmatex">\(\chi^2\)</span> Fit?</h1>
+<p>A <span class="arithmatex">\(\chi^2\)</span> (or <strong>chi-squared</strong>/<strong>weighted least squares</strong> fit) is a way of fitting a model to data when each point has a different uncertainty. </p>
+<p>If your data points are <span class="arithmatex">\((O_i, C_i)\)</span>, (where O is your <strong>Observation</strong> data, and C is your <strong>Calculated</strong> data) and each <span class="arithmatex">\(O_i\)</span> has an uncertainty <span class="arithmatex">\(\sigma_i\)</span>, then the best-fit line minimizes the following quantity:</p>
+<div class="arithmatex">\[\chi^2 = \sum_{i}(\frac{O_i - C_i}{\sigma_i})^2\]</div>
+<p>Once you calculate <span class="arithmatex">\(\chi^2\)</span>, you can then calculate the <strong>reduced chi-squared</strong> statistic:</p>
+<div class="arithmatex">\[\chi^2_{red}=\frac{\chi^2}{\nu}=\frac{\chi^2}{N-p}\]</div>
+<p>Where:</p>
+<ul>
+<li>
+<p><span class="arithmatex">\(N\)</span> is the number of data points</p>
+</li>
+<li>
+<p><span class="arithmatex">\(p\)</span> is the number of fitted parameters</p>
+</li>
+<li>
+<p><span class="arithmatex">\(\nu\)</span> is the <strong>degrees of freedom</strong></p>
+</li>
+</ul>
+<p>In our case, we aren't fitting a curve. We're instead testing how well a pair of known emission values match with our predicted energies based on our calibration line. Since we have uncertainties associated with those predicted energies, a <span class="arithmatex">\(\chi^2\)</span> test gives us a rigorous way to evaluate the quality of each potential match. </p>
+<p>We'll perform a <span class="arithmatex">\(\chi^2\)</span> calculation for each possible <strong>pairing</strong> between a peak-1 candidate and a peak-2 candidate. For each of our possible 12 pairs, we'll compare their known emission energies to our observed values. So, for each pair we will compute:</p>
+<div class="arithmatex">\[\chi^2 = (\frac{E_{obs,1}-E_{obs,1}}{\sigma_1})^2 + (\frac{E_{obs,2}-E_{obs,2}}{\sigma_2})^2\]</div>
+<p>We're not fitting any parameters, <span class="arithmatex">\(\nu\)</span> will be set to the number of data points alone, giving us:</p>
+<div class="arithmatex">\[\chi^2_{red}=\frac{\chi^2}{2}\]</div>
+<p>The combination with the <strong>lowest</strong> value for <span class="arithmatex">\(\chi^2_{red}\)</span> will be considered the <strong>best fit</strong>.</p>
+<h1 id="implementing-the-chi2-calculation">Implementing the <span class="arithmatex">\(\chi^2\)</span> calculation</h1>
+<p>To automate this process, we can use the following function in Python:</p>
+<pre><code class="language-python">def chi_squared(observed, expected, uncertainties):
+    residuals = (observed - expected) / uncertainties
+    return np.sum(residuals**2)
 </code></pre>
-<p>or:</p>
-<pre><code class="language-bash">pip install notebook
-</code></pre>
-<p>You can then run them with either:</p>
-<pre><code class="language-bash">jupyter lab
-</code></pre>
-<p>or:</p>
-<pre><code class="language-bash">jupyter notebook
-</code></pre>
-<p>It should be noted that in order for Jupyter to work you will also be required to have an up-to-date browser. Chrome, Safari, and Firefox are all supported.</p>
-<p>Running one of these commands will then open Jupyter in a browser. </p>
-<p>Jupyter will then show you an in-browser version of your file-explorer where you can navigate to create a new project folder to follow along with this lesson. Before doing that, make sure that you also have the necessary libraries installed. Click on <code>New</code> and select <code>Terminal</code> in order to ensure that the libraries are installed in the same location that Jupyter has access to. From this terminal, run the commands:</p>
-<pre><code class="language-bash">pip install scipy
-pip install pandas
-pip install matplotlib
-pip install numpy
-</code></pre>
-<p>The <code>scipy</code> library will be used to find our peaks and create our curve fits, <code>pandas</code> will be used for loading the <code>.csv</code> data, <code>matplotlib</code> will be used to plot the data, and <code>numpy</code> will be used for multiple mathematical expressions.</p>
-<p>Next, create a folder to house your project files, named something like "data-fitting". After doing this, download and unzip <a href="../raw-data/raw-data.zip">these raw data files</a>. Then, you can move the "raw-data" folder into your project folder. </p>
-<p>Finally, create a new notebook by clicking on <code>New</code> and <code>Notebook</code> and selecting the kernel - <code>Python 3 (ipykernel)</code>. You can then either name your project or keep it untitled.</p>
-<hr />
-<p>Now that we're all setup, <a href="../03_experiment_details/">click here to continue to the next section</a> where we can begin to learn more about the experiment and how it functions before getting started fitting our data.</p>
 
 
 
