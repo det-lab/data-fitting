@@ -6,7 +6,7 @@ nav:
   - Initial Plotting: 03_isolating_peaks.md
   - First fits: 04_fitting_curves.md
   - Line Fit: 05_linregress.md
-  - Chi Squared Fits: 06_chi_squared.md
+  - Chi Squared: 06_chi_squared.md
 
 theme: 
   name: material

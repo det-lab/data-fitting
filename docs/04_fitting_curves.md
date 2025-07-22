@@ -3,11 +3,11 @@ The parameters that `curve_fit` works from are given by the [official documentat
 
 Only these four will be covered here, but feel free to explore the documentation provided if you wish to use everything that `curve_fit` has to offer.
 
-Here, `f` is our model function. This requires the creation of another function which will be called in `curve_fit`. It is necessary that the first argument that this function takes is the independent variable, which is the x-axis in the case of our data. The other parameters of this function will be the remaining unknown variables of the equation. 
+In `curve_fit`, `f` is our model function. This requires the creation of another function which will be called in `curve_fit`. It is necessary that the first argument that the function `f` takes is the independent variable, which is the x-axis in the case of our data. The other parameters of this function will be the remaining unknown variables of the equation.
 
-`xdata`, and `ydata` are exactly what they sound like: the data that you're fitting to the model function.
+`xdata`, and `ydata` are exactly what they sound like: the x and y data that you're fitting to the model function.
 
-`p0` is the initial guess for the unknown variables/parameters of the model function. It is given as an **array** where every guess is listed in the order that their associated parameters are listed in the function definition (i.e. if the function is: `def function(x, a, b)`, `p0` would be `[a_estimate, b_estimate]`). 
+`p0` is the initial guess for the unknown variables/parameters of the model function. It is given as an **array** where every guess is listed in the order that their associated parameters are listed in the function definition (i.e. if the function `f` is: `def function(x, a, b)`, `p0` would be `[a_estimate, b_estimate]`). 
 
 Let's get started on creating our model function.
 # The Gaussian
@@ -17,7 +17,7 @@ $$f(x)=\frac{1}{\sqrt{2\pi \sigma^2}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}+D$$
 
 In gamma spectroscopy, we are using the Gaussian as a model for how our detected energy counts are spread around the central photopeak. Variations in the emission and detection of our photons have caused the recorded values to "smear" into a normal distribution, with the most common value being the center of the curve. Fitting our data to this curve then allows us to extract the value for the central energy, $\mu$, as well as its margin of error.
 
-In our equation, the first term ($\frac{1}{\sqrt{2\pi \sigma^2}}$) is called the **normalization constant**. Its purpose is to set the value of the integral of our curve to be equal to 1, meaning 100% of the data fits under the curve, but this term can actually be dropped for our purposes. We can thus set our equation to be equal to:
+In our equation, the first term ($\frac{1}{\sqrt{2\pi \sigma^2}}$) is called the **normalization constant**. Its purpose is to set the value of the integral of a Gaussian curve to be equal to 1, meaning 100% of the data fits under the curve, but this term can actually be dropped for our purposes. We can thus set our equation to be equal to:
 
 $$f(x)=A \cdot e^{-\frac{(x-\mu)^2}{2\sigma^2}}+D$$
 
@@ -27,7 +27,7 @@ In this equation:
 
 * $\mu$ is the **mean value** in the **center** (the energy of the photon)
 
-* $\sigma$ relates to the standard deviation/**thickness** of the "line"
+* $\sigma$ relates to the standard deviation/**thickness** of the line
 
 * D is the y-offset.
 
@@ -40,7 +40,7 @@ Additionally, our data will include some peaks which are so close to each other 
 
 $$f(x)=A_1 \cdot e^{-\frac{(x-\mu_1)^2}{2\sigma^2_1}}+A_2 \cdot e^{-\frac{(x-\mu_2)^2}{2\sigma^2_2}}+...+A_n \cdot e^{-\frac{(x-\mu_n)^2}{2\sigma^2_n}}+D$$
 
-Where `n` is given by the number of overlapping peaks. Luckily, our data shouldn't include more than two overlapping peaks, so we can create the second function as:
+Where `n` is given by the number of overlapping peaks. Luckily, our data shouldn't include more than two overlapping peaks, so we only need to create a function to find the parameters of a double gaussian:
 ```python
 def double_gaussian(x, amp_1, mu_1, sigma_1, amp_2, mu_2, sigma_2, y_offset):
     return (
@@ -50,9 +50,9 @@ def double_gaussian(x, amp_1, mu_1, sigma_1, amp_2, mu_2, sigma_2, y_offset):
     )
 ```
 # Using `curve_fit`
-Now we can **finally** use `curve_fit` to start extracting values from our data. `curve_fit` can return five different values, `popt`, `pcov`, `infodict`, `mesg`, and `ier`, but only the first two are valuable for our purposes. `popt` is a one dimensional array containing the optimal parameter values, while `pcov` contains a 2-D array with the approximate covariance of `popt`. For the uncertainties, only the square roots of the diagonal values of `pcov` is needed.
+Now we can **finally** use `curve_fit` to start extracting values from our data. `curve_fit` can return five different values, `popt`, `pcov`, `infodict`, `mesg`, and `ier`, but only the first two are valuable for our purposes. `popt` is a one dimensional array containing the optimal parameter values, while `pcov` contains a 2-D array with the approximate covariance of `popt`. For the values of the **optimal parameter's uncertainties**, only the square roots of the diagonal values of `pcov` are needed.
 
-Let's create a function for each of our gaussian functions which will return `popt` and `pcov`. The only difference between these functions will be which equation they call to fit to.
+Let's create a function for each of our gaussian functions which will return `popt` and `pcov`. The only difference between these functions will be which equation they call as the model functions:
 ```python
 def find_gaussian_values(xdata, ydata, p0):
     return curve_fit(gaussian, xdata, ydata, p0=p0)
@@ -60,10 +60,11 @@ def find_gaussian_values(xdata, ydata, p0):
 def find_dgaussian_values(xdata, ydata, p0):
     return curve_fit(double_gaussian, xdata, ydata, p0=p0)
 ```
-Next, let's create a function which will take our `popt` and `pcov` arrays and use them to create a plot of our data against the **line of best fit**. It will be able to take an element name and our emission value in order to title each plot. We can also make it capable of plotting either a gaussian or a double gaussian with a simple `True`/`False` flag, and then using an `if`/`else` tree to differentiate between the two. It will also print out the found parameters and their uncertainties, as well as return our $\mu$ values and their uncertainties so they can be saved and used later:
+Next, let's create a function which will take our `popt` and `pcov` arrays and use them to create a plot of our data against the **line of best fit**. It will be able to take an element name and our emission value in order to title each plot. We can also make it capable of plotting either a gaussian or a double gaussian with a simple `True`/`False` flag, and then use an `if`/`else` tree to differentiate between the two. It will also print out the found parameters and their uncertainties, as well as return our $\mu$ values and their uncertainties so they can be assigned to variables and used later:
 ```python
 def plot_best_fit(element, emission_peak, xdata, ydata, popt, pcov, d_gaussian=False):
     uncertainties = np.sqrt(np.diag(pcov))
+    # Create labels for printing results
     if not d_gaussian:
         labels = ['Amplitude', 'Mean', 'Sigma', 'Y-offset']
     else:
@@ -77,7 +78,10 @@ def plot_best_fit(element, emission_peak, xdata, ydata, popt, pcov, d_gaussian=F
         mu_1, mu_2 = popt[1], popt[4]
         mu_1_uncertainty, mu_2_uncertainty = uncertainties[1], uncertainties[4]
 
+    # Plot raw data of peak
     plt.scatter(xdata, ydata, label='Data', marker='.', color='blue')
+
+    # Plot line of best fit and draw a vertical line through mu value
     if not d_gaussian:
         plt.plot(xdata, gaussian(xdata, *popt), label='Best fit', color='red')
         plt.axvline(mu, color='green', linestyle='-.', label=f'$\mu: {mu:.2f}\pm{mu_uncertainty:.2f}$')
@@ -86,12 +90,14 @@ def plot_best_fit(element, emission_peak, xdata, ydata, popt, pcov, d_gaussian=F
         plt.axvline(mu_1, color='green', linestyle='-.', label=f'$\mu_1: {mu_1:.2f}\pm{mu_1_uncertainty:.2f}$')
         plt.axvline(mu_2, color='black', linestyle='-.', label=f'$\mu_2: {mu_2:.2f}\pm{mu_2_uncertainty:.2f}$')
     
+    # Title plot, show legend, and label axes
     plt.title(f'{element}: {emission_peak} Peak')
     plt.xlabel('Channel')
     plt.ylabel('Counts')
     plt.legend()
     plt.show()
 
+    # Print and return results
     print('Best fit parameters:')
     for name, val, err in zip(labels, popt, uncertainties):
         print(f'{name}: {val:.2f} +/- {err:.2f}')
@@ -101,7 +107,7 @@ def plot_best_fit(element, emission_peak, xdata, ydata, popt, pcov, d_gaussian=F
     else:
         return mu_1, mu_1_uncertainty, mu_2, mu_2_uncertainty
 ```
-With these functions, we can now run our first `curve_fit`:
+With these functions, we can now run our first `curve_fit` after estimating the amplitude, center channel of the peak, the thickness of the line, and the y-offset:
 ```python
 p0=[175, 1750, 20, 50]
 
@@ -164,7 +170,7 @@ value_bank = {
     ('Co-60', Co_60P2_mu, Co_60P2_mu_uncert, 1333),
 }
 ```
-This is where you'll store variables for each of the remaining files emission peaks, which will be used in the next section. For reference (if you're interested in attempting to find peak fits before continuing to the next section), here is a table with the provided isotopes and the known emission energies of their photopeaks:
+This is where you'll store variables for each of the remaining files emission peaks, which will be used in the next section. For reference (if you're interested in attempting to find peak fits before continuing to the next section), here is a table with the provided isotopes and the known emission energies of their most prominent photopeaks:
 |Isotope | Energy (keV)                     |
 |--------|----------------------------------|
 |Na-22   |511, 1274.54                      |

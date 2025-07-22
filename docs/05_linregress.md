@@ -48,21 +48,23 @@ for (label, tested, uncertainty, known) in value_bank:
     tested_uncertainty.append(uncertainty * uncertainty_scale)
     known_peaks.append(known)
 ```
-With our known_peaks and tested_means now separated, we can use `scipy`'s `linregress` to calculate the slope, intercept, and their respective margin's of error:
+With our known_peaks and tested_means now separated, we can use `scipy`'s `linregress` to calculate the slope, intercept, and their respective margins of error:
 ```python
-result = linregress(known_peaks, tested_means)
+result        = linregress(known_peaks, tested_means)
 slope         = result.slope
 intercept     = result.intercept
 stderr        = result.stderr
 intercept_err = result.intercept_stderr
 ```
-We can now plot our data so far to make sure our data makes sense. If you found the peak values separately and your results show significant deviation from these results, it's possible an error was made that you can now try to find and correct. 
+We can now plot our data so far to make sure everything is going according to plan. If you followed along with this lesson and found the peak values separately, here is when it will be possible to see if you made an error while selecting peaks that you can go back and correct. 
 
-For plotting the line of best fit, we'll first create a line which uses the calculated slope and intercept values along with `np.linspace`. We'll add some space on either side of our max and min values to give our data points some visual space. Then we can plot our error bars, display our labels for each data point, and plot our data, the line of best fit, and label our axes:
+For plotting the line of best fit, we'll first create a line which uses the calculated slope and intercept values along with `np.linspace`. We'll add some space on either side of our max and min values to give our data points some visual breathing room. Then we can plot our error bars, display our labels for each data point, and plot our data, the line of best fit, and label our axes:
 ```python
+# Create the line of best fit
 x_line = np.linspace(min(known_peaks)-100, max(known_peaks)+100, 100)
 y_line = slope*x_line + intercept
 
+# Plot error bars
 plt.errorbar(
     known_peaks, tested_means,
     yerr=tested_uncertainty,
@@ -71,9 +73,11 @@ plt.errorbar(
     label='Known Emissions'
 )
 
+# Show labels next to their respective data points
 for x, y, label in zip(known_peaks, tested_means, labels):
     plt.text(x+50, y, label, fontsize=9, ha='left', va='top')
 
+# Plot best fit line and data points
 plt.scatter(known_peaks, tested_means, s=1)
 plt.plot(x_line, y_line, label=f'$C=({slope:.2f}\pm{stderr:.2f})\cdot E+({intercept:.2f}\pm {intercept_err:.2f})$')
 plt.xlabel('Emission Energy (keV)')
@@ -87,11 +91,11 @@ plt.show()
 ![Line of best fit](images/line-of-best-fit.png)
 
 # Plotting the Unknown Isotope
-In order to find the emission energies for our unknown isotope, we'll have to rearrange our linear equation for E. As $C=mE+b$:
+In order to find the emission energies for our unknown isotope, we'll have to rearrange our linear equation to solve for E. As $C=mE+b$:
 
 $$E = \frac{C-b}{m}$$
 
-Now that we have our slope, m, and intercept, b, from using `linregress`, we can start finding our unknown energy values as well as their uncertainties. We're looking for the uncertainties in the unknown energy as it is possible that when we search gamma tables to try and find our isotope we may get multiple energy results **near** our central peak. To find the energy uncertainties, we'll have to use **error propagation**. 
+Now that we have our slope and intercept from the results of `linregress`, we can start finding our unknown energy values as well as **their uncertainties**. We're looking for the uncertainties in the unknown energy as it is possible that when we search gamma tables to try and find our isotope we may get multiple energy results **near** our central peak. To find the energy uncertainties, we'll have to use **error propagation**. 
 ## Error Propagation
 For a given function:
 
@@ -107,7 +111,11 @@ $$\sigma_f = \sqrt{
 
 As we're looking for $\sigma_E$, this means our equation will look like:
 
-$$\sigma_E = \sqrt{(\frac{\delta E}{\delta C}\sigma_C)^2+(\frac{\delta E}{\delta b}\sigma_b)^2+(\frac{\delta E}{\delta m}\sigma_m)^2}$$
+$$\sigma_E = \sqrt{
+    (\frac{\delta E}{\delta C}\sigma_C)^2 +
+    (\frac{\delta E}{\delta b}\sigma_b)^2 +
+    (\frac{\delta E}{\delta m}\sigma_m)^2
+}$$
 
 $$\sigma_E = \sqrt{
     (\frac{1}{m}\sigma_C)^2 + 
@@ -123,10 +131,10 @@ unknown_uncertainties = []
 predicted_energies    = []
 predicted_uncertainty = []
 
-unknown_values = {
+unknown_values = [
     ('Unknown Peak 1', unknown_P1_mu, unknown_P1_mu_uncert),
     ('Unknown Peak 2', unknown_P2_mu, unknown_P2_mu_uncert)
-}
+]
 for label, tested, uncertainty in unknown_values:
     unknown_labels.append(label)
     unknown_means.append(tested)
@@ -182,27 +190,25 @@ plt.show()
 # Finding Matching Isotopes
 An important thing to note when trying to find which isotopes our unknown source could potentially be, is that we've **never** specified that the source contains **only one** isotope. It's entirely possible that it has two isotopes that have our observed peaks instead. 
 
-In searching for our source, we'll be using the website [https://atom.kaeri.re.kr/old/gamrays.html](https://atom.kaeri.re.kr/old/gamrays.html). Here, we can enter our energy range as well as a half-life, and receive an output of multiple isotopes. As the sources had not been changed in multiple years at UCDenver, we can estimate a half-life of at least a month.
+In searching for our source, we'll be using the website [https://atom.kaeri.re.kr/old/gamrays.html](https://atom.kaeri.re.kr/old/gamrays.html). Here, we can enter our energy range as well as a half-life, and receive an output of multiple isotopes. As the sources had not been changed in multiple years at UCDenver, we can estimate a half-life of at least two months.
 
-Using this tool, our found energy ranges, and an estimated half-life minimum of 30 days, the matches we find for our first peak are:
+Using this tool, our found energy ranges, and an estimated half-life minimum of 60 days, the matches we find for our first peak are:
 
-|Nuclide | Energy (keV) |
-|--------|--------------|
-|Te-129  |695.88        |
-|Pm-144  |696.49        |
-|Nb-94   |702.622       |
+|Nuclide | Energy (keV) |Half-Life |
+|--------|--------------|----------|
+|Pm-144  |696.49        |363 D     |
+|Nb-94   |702.622       |20400 Y   |
 
 And for our second peak, we get the matches:
 
-|Nuclide | Energy (keV) |
-|--------|--------------|
-|Sn-123  |1088.64       |
-|Fe-59   |1099.25       |
-|Te-121  |1102.15       |
-|Zn-65   |1115.55       |
+|Nuclide | Energy (keV) |Half-Life |
+|--------|--------------|----------|
+|Sn-123  |1088.64       |129.2 D   |
+|Te-121  |1102.15       |164.2 D   |
+|Zn-65   |1115.55       |243.93 D  |
 
-As this information provides us with no overlapping options, this means that we will have to compare each of the first three options against each of the last four options in order to determine which combination of isotopes our source contained.
+As this information provides us with no overlapping options, this means that we will have to compare each of the first two options against each of the second three options in order to determine which combination of isotopes our source most likely contained.
 
 ---
 
-In order to perform this final analysis, we'll need to perform something known as a $\chi^2$ (or **chi-squared**) fit. [Click here to continue on to our next section](06_chi_squared.md) where we will learn how to use such fits to find the quality of our data fits.
+In order to perform this final analysis, we'll need to perform something known as a $\chi^2$ (or **chi-squared**) fit. [Click here to continue on to our next section](06_chi_squared.md) where we will learn how to use such fits to assess the quality of our findings.
