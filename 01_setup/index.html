@@ -341,7 +341,7 @@
   
   
   <span class="md-ellipsis">
-    Chi Squared Fits
+    Chi Squared
     
   </span>
   
@@ -386,8 +386,8 @@
 
 
 <h1 id="setup">Setup</h1>
-<p>This lesson will be using Python 3 along with several of its more common libraries: <code>scipy</code>, <code>pandas</code>, <code>matplotlib</code>, and <code>numpy</code>. This lesson will also be done using a Jupyter Notebook. </p>
-<p>First, it'll be necessary to install Python if you don't already have it. You can follow the instructions from <a href="https://realpython.com/installing-python/">python's official website</a> in order to get started. </p>
+<p>This lesson will be using Python 3 along with several of its more common libraries: <code>scipy</code>, <code>pandas</code>, <code>matplotlib</code>, and <code>numpy</code>. This lesson will also be done inside a Jupyter Notebook. </p>
+<p>First, it'll be necessary to install Python if you don't already have it. You can follow the instructions from <a href="https://realpython.com/installing-python/">Python's official website</a> in order to get started. </p>
 <p>It's recommended to install Jupyter Notebook through <code>pip</code>, so after installing Python you should check that it comes with <code>pip</code> installed. This can be done by running the following commands depending on your operating system:</p>
 <table>
 <thead>
@@ -437,17 +437,17 @@
 <p>or:</p>
 <pre><code class="language-bash">jupyter notebook
 </code></pre>
-<p>It should be noted that in order for Jupyter to work you will also be required to have an up-to-date browser. Chrome, Safari, and Firefox are all supported.</p>
-<p>Running one of these commands will then open Jupyter in a browser. </p>
+<p>Jupyter does require the use of an up-to-date browser in order to work. Chrome, Safari, and Firefox are all supported.</p>
+<p>Running one of the above commands will then open Jupyter in a browser. </p>
 <p>Jupyter will then show you an in-browser version of your file-explorer where you can navigate to create a new project folder to follow along with this lesson. Before doing that, make sure that you also have the necessary libraries installed. Click on <code>New</code> and select <code>Terminal</code> in order to ensure that the libraries are installed in the same location that Jupyter has access to. From this terminal, run the commands:</p>
 <pre><code class="language-bash">pip install scipy
 pip install pandas
 pip install matplotlib
 pip install numpy
 </code></pre>
-<p>The <code>scipy</code> library will be used to find our peaks and create our curve fits, <code>pandas</code> will be used for loading the <code>.csv</code> data, <code>matplotlib</code> will be used to plot the data, and <code>numpy</code> will be used for multiple mathematical expressions.</p>
+<p>The <code>scipy</code> library will be used to create our curve fits, <code>pandas</code> will be used for loading the <code>.csv</code> data, <code>matplotlib</code> will be used to plot the data, and <code>numpy</code> will be used for multiple mathematical expressions.</p>
 <p>Next, create a folder to house your project files, named something like "data-fitting". After doing this, download and unzip <a href="../raw-data/raw-data.zip">these raw data files</a>. Then, you can move the "raw-data" folder into your project folder. </p>
-<p>Finally, create a new notebook by clicking on <code>New</code> and <code>Notebook</code> and selecting the kernel - <code>Python 3 (ipykernel)</code>. You can then either name your project or keep it untitled.</p>
+<p>Finally, create a new notebook by clicking on <code>New</code> and <code>Notebook</code> and selecting the kernel: <code>Python 3 (ipykernel)</code>. You can then either name your project or keep it untitled.</p>
 <hr />
 <p>Now that we're all setup, <a href="../02_experiment_details/">click here to continue to the next section</a> where we can begin to learn more about the experiment and how it functions before getting started fitting our data.</p>
 

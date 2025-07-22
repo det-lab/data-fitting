@@ -397,7 +397,7 @@
   
   
   <span class="md-ellipsis">
-    Chi Squared Fits
+    Chi Squared
     
   </span>
   
@@ -474,8 +474,8 @@
 
 
 <h1 id="initial-data-plotting">Initial Data Plotting</h1>
-<p>For this section, let's first see the entire process for selecting out the data for a single file so that it can be generalized and applied to all of our data. Just as an example, I'll be demonstrating the process using the <code>Co60.csv</code> file.</p>
-<p>Before we can get started plotting our data, we'll want to import the modules which will be used. In the first cell of your Jupyter Notebook, add the import statements:</p>
+<p>For this section, let's first see the entire process for selecting out the data for a single file so that the method can be applied to all of our data. Just as an example, I'll be demonstrating the process using the <code>Co60.csv</code> file, which you may be able to guess contains a sample of Cobalt-60.</p>
+<p>Before we can get started plotting our data, we'll want to import the modules which we will use. In the first cell of your Jupyter Notebook, add the import statements:</p>
 <pre><code class="language-python">import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
@@ -483,10 +483,10 @@ from scipy.optimize import curve_fit
 from scipy.signal import find_peaks
 from scipy.stats import linregress, chi2
 </code></pre>
-<p>As a last step before plotting, we'll want to inspect our <code>.csv</code> files to see which rows and columns we're able to use. Here's what the first several lines of the file <code>Co60.csv</code> contain:</p>
+<p>Before plotting, we'll also want to inspect our <code>.csv</code> files to see which rows and columns we're able to use. Here's what the first several lines of the file <code>Co60.csv</code> contain:</p>
 <p><img alt="Co60 data" src="../images/extra-data.png" /></p>
-<p>As you can see here, rows 1 through 18 contain extraneous data related to the program settings when the data was collected, such as the voltage, fine and coarse grain values, the time and date that the data was collected, and so on. It isn't until row 23 that we start getting actual data points, with row 22 telling us the column names. We can also see that only the first and third columns (Channel &amp; Counts) contain data, with the second column (Energy) being empty. These facts hold true across all of our files, so we can skip the same rows and only use the same columns across all of our data.</p>
-<p>For much of our data, it will also be easier to find our peaks if we set the y-axis on a logarithmic scale. Let's get started by creating a method which will load and plot our data when given a file path, and which will also have an option to allow us to control how the y-axis is scaled:</p>
+<p>As you can see here, rows 1 through 18 contain extraneous data related to the program settings when the data was collected, such as the voltage, fine and coarse grain values, the time and date that the data was collected, and so on. It isn't until row 23 that we start getting actual data points, with row 22 telling us the column names. We can also see that only the first and third columns (Channel &amp; Counts) contain data, with the second column (Energy) being empty. These facts hold true across all of our files, so we can skip the same initial rows and only use the same columns across all of our data.</p>
+<p>For much of our data, it will also be easier to find our peaks if we set the y-axis to a logarithmic scale instead of a linear one. Let's get started by creating a method which will load and plot our data when given a file path, and which will also have an option to allow us to control how the y-axis is scaled:</p>
 <pre><code class="language-python">def plot_data(isotope, y_log=True):
     data = pd.read_csv(f'raw-data/{isotope}.csv', skiprows=21, usecols=[0,2])
     # Assign axes and names
@@ -508,34 +508,36 @@ from scipy.stats import linregress, chi2
 
     return data
 </code></pre>
-<p>You can then use this method along with a filepath to create a plot of the recorded data:</p>
-<pre><code class="language-python">plot_data(&quot;Co60.csv&quot;, y_log=True)
+<p>This function only requires the name of the file before the file extension in order to create a plot of the recorded data. If <code>y_log</code> isn't specified, it will default to <code>True</code>:</p>
+<pre><code class="language-python">plot_data(&quot;Co60&quot;, y_log=True)
 </code></pre>
 <p><strong>Output:</strong></p>
 <p><img alt="Co60 Raw" src="../images/Co60_raw_data.png" /></p>
 <h2 id="interpreting-the-plot">Interpreting the Plot</h2>
-<p>In order to properly calibrate our data, it's necessary that we fully understand what the raw data is telling us. In this case, it's important to know first that Cobalt-60 has two peak emission spectra: one at <strong>1.175 MeV</strong>, and another at <strong>1.333 MeV</strong>. However, in this plot, there appear to be <strong>at least</strong> 3 separate peaks: 1 on the far left, and 2 on the far right of the plot, and 2 bumps which could possibly be considered peaks between them. So, how do we know which ones to consider?</p>
+<p>In order to properly calibrate our data, it's necessary that we fully understand what the raw data is telling us. In this case, it's important to know first that Cobalt-60 has two peak emission spectra: one at <strong>1.175 MeV</strong>, and another at <strong>1.333 MeV</strong>. However, in this plot, there appear to be <strong>at least</strong> 3 separate peaks: 1 on the far left, and 2 on the far right of the plot, and 2 bumps which could possibly be considered peaks between them. So, how do we know which ones to consider when we begin isolating our peaks?</p>
 <h3 id="compton-scattering">Compton Scattering</h3>
-<p>In gamma spectroscopy, not every gamma photon deposits its full energy into the detector. As mentioned previously, the scintillator steps down the photon energies in a process known as <strong>Compton scattering</strong>, where the photon transfers its energy to an electron. In this process, it is possible for only a fraction of the photon's energy to be absorbed by the electron it's incident upon, with the total deposited energy being reliant on the scattering angle. Between the leftmost and rightmost peaks in the plot, you can see a gently sloping distribution. This is known as the <strong>Compton plateau</strong> or <strong>Compton continuum</strong>.</p>
-<p>The upper limit of partial energy deposition forms what's called the <strong>Compton edge</strong> (or <strong>Compton cliff</strong>): a relatively sharp drop at the high-energy end of the Compton continuum. In the plot for Cobalt-60, this can be seen just before the peaks on the right hand side. The energy of this edge corresponds to the maximum energy that a photon can transfer in a single Compton scattering event, which occurs when it's backscattered <span class="arithmatex">\(180^\circ\)</span> - when the photon goes straight up in the detector, deposits a significant fraction of its energy, and is then reflected directly away. The smaller "bumps" before the main peaks are not true photopeaks, but part of the backscatter pattern.</p>
-<p>The <strong>far-left</strong> peak is most likely the result of backscatter radiation as well. Backscatter peaks arise when gamma photons scatter off of nearby objects, such as the detector housing or lab walls, and then re-enter the detector with significantly reduced energy. These photons can produce a small but distinct peak at lower channels, well below the main Compton continuum. </p>
-<p>It's important to understand that the Compton edge only shows the maximum for <strong>partial energy loss</strong>, not the <strong>maximum possible energy</strong> that can be detected. Past the edge, a photon gets closer to being fully absorbed by the scintillator, meaning everything before the furthest right peaks represents events where the photon is at least partially reflected out of the detector, and the centers of the peaks represent where all of the photon's energy is absorbed by the scintillator and passed on to the PMT. Every true photopeak should be preceded by a Compton continuum and edge. As our photopeaks are so near each other in our Co-60 data, their respective Compton features overlap.</p>
+<p>In gamma spectroscopy, not every gamma photon deposits its full energy into the detector. As mentioned previously, the scintillator steps down the photon energies in a process known as <strong>Compton scattering</strong>, where a photon transfers its energy to a series of electrons. In this process, it is possible for only a fraction of the photon's energy to be absorbed by the electron it's incident upon, with the total deposited energy being reliant on the scattering angle. Between the leftmost and rightmost peaks in the plot, you can see a gently sloping distribution. This is known as the <strong>Compton plateau</strong> or <strong>Compton continuum</strong>.</p>
+<p>The upper limit of partial energy deposition forms what's called the <strong>Compton edge</strong> (or <strong>Compton cliff</strong>): a relatively sharp drop at the high-energy end of the Compton continuum. In the plot for Cobalt-60, this can be seen just before the peaks on the right hand side. The energy of this edge corresponds to the maximum energy that a photon can transfer in a single Compton scattering event, which occurs when the photon enters the detector and deposits a significant portion of its energy before being reflected <span class="arithmatex">\(180^\circ\)</span>. The smaller "bumps" before the main peaks are not true photopeaks, but part of the Compton scattering pattern.</p>
+<p>The <strong>far-left</strong> peak is most likely the result of backscatter radiation. Backscatter peaks arise when gamma photons scatter off of nearby objects, such as walls, the table, or the radiation shielding, before they re-enter the detector with significantly reduced energy. These photons can produce a small but distinct peak at lower channels, below the main Compton continuum. </p>
+<p>It is also possible for the lower energy peaks to occur as a result of the detector material. When an incoming gamma photon ejects an inner shell electron in the scintillator, it will emit a characteristic X-ray depending on what it's made out of, NaI in the case of this experiment. This is called an X-ray escape peak. </p>
+<p>This gives our low energy peak two possible explanations: either it is backscatter radiation, or it is an escape peak emitted by our NaI detector. These explanations don't have to be mutually exclusive either - it's possible that both features occur with similar energies.</p>
+<p>It's important to understand that the Compton edge only shows the maximum for <strong>partial energy loss</strong>, not the <strong>maximum possible energy</strong> that can be detected. Past the edge, a photon gets closer to being fully absorbed by the scintillator, meaning everything before the furthest right peaks represents events where the photon is at least partially reflected out of the detector, and the centers of the peaks represent where most or all of the photon's energy is absorbed by the scintillator and passed on to the PMT. Every true photopeak should be preceded by a Compton continuum and edge. As our photopeaks are so near each other in our Co-60 data, their respective Compton features overlap.</p>
 <p>Altogether, this plot shows:</p>
 <ul>
 <li>
-<p>A backscatter reflective peak on the far left,</p>
+<p>A backscatter reflective peak and/or an X-ray escape peak on the far left,</p>
 </li>
 <li>
 <p>A Compton continuum in the mid range,</p>
 </li>
 <li>
-<p>A Compton edge before the two peaks on the right,</p>
+<p>A Compton edge before the first photopeak,</p>
 </li>
 <li>
 <p>And finally, the two true photopeaks of Cobalt-60 on the far right.</p>
 </li>
 </ul>
-<p>Now that we understand the features of our plot, let's move forward to selecting our peaks.</p>
+<p>Now that we understand the features of our plot, let's move forward to selecting the data from our peaks.</p>
 <h1 id="selecting-the-photopeaks">Selecting the Photopeaks</h1>
 <p>There are two main methods that can be used to find our peaks: </p>
 <ol>
@@ -551,19 +553,22 @@ from scipy.stats import linregress, chi2
 </code></pre>
 <p>Now we can use the <code>Co_60</code> variable to find our peaks. Let's look at the process for using <code>find_peaks</code> first.</p>
 <h2 id="find_peaks"><code>find_peaks</code></h2>
-<p>In order to find our peaks with this method, we'll first want to assign  <code>Co_60</code>'s x- and y-axes to variables so that we can plot them underneath our peak finding. The result that we're looking for is to have one selected point at the top of our two right peaks.</p>
-<p>The <code>find_peaks</code> module can take as optional parameters: <code>height</code>, <code>threshold</code>, <code>distance</code>, <code>prominence</code>, <code>width</code>, <code>wlen</code>, <code>rel_height</code>, and <code>plateu_size</code>. Locating the peaks will require careful manipulation of these values in order to exclude noise. For more complete descriptions of these parameters, <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.find_peaks.html">click here to go to the official documentation.</a></p>
-<p>Without assigning any of these parameters a value, <code>find_peaks</code> selects indices in the data that are preceded by and followed by smaller values. It returns them along with a dictionary which contains the values <strong>it calculates</strong> for the optional parameters (heights, thresholds, prominences, etc). To show what this looks like, let's plot our data underneath the found peaks without first changing any parameters:</p>
+<p>In order to find our peaks with this method, we'll first want to assign  <code>Co_60</code>'s x- and y-axes to variables so that we can plot them against what <code>find_peaks</code> returns as a comparison. The result that we're looking for is to have one selected point at the top of our two right peaks.</p>
+<p>The <code>find_peaks</code> module can take as optional parameters: <code>height</code>, <code>threshold</code>, <code>distance</code>, <code>prominence</code>, <code>width</code>, <code>wlen</code>, <code>rel_height</code>, and <code>plateu_size</code>. Locating the peaks will require careful manipulation of these values in order to exclude noise and data that isn't the peaks. For more complete descriptions of these parameters, <a href="https://docs.scipy.org/doc/scipy/reference/generated/scipy.signal.find_peaks.html">click here to go to the official documentation.</a></p>
+<p>Without assigning any of these parameters a value, <code>find_peaks</code> selects indices in the data that are preceded by and followed by smaller values. It returns them along with a dictionary which contains the values <strong>it calculates</strong> for the optional parameters (heights, thresholds, prominences, etc). To show what this looks like, let's plot our data underneath the found peaks without first trying to filter for certain parameters:</p>
 <pre><code class="language-python">x_values = Co_60.iloc[:,0]
 y_values = Co_60.iloc[:,1]
-peaks, properties = find_peaks(y_values)
+# Find peaks
+peaks, _ = find_peaks(y_values)
+# Plot data
 plt.scatter(x_values, y_values, s=1)
+# Plot peaks
 plt.plot(peaks, y_values[peaks], 'x', color='red')
 plt.show()
 </code></pre>
 <p><strong>Output:</strong></p>
 <p><img alt="first peak find" src="../images/first_peak_find.png" /></p>
-<p>Each one of the plotted 'x's is being counted as a 'peak'. So, to narrow down our choices, let's start trying to estimate the parameters. Let's try adjusting <code>distance</code>, <code>prominence</code>, and <code>width</code>. The distance argument sets the minimum distance that should exist between two peaks. The <code>prominence</code> argument measures the vertical distance between the top of the peak and the lowest contour line that doesn't enclose a higher peak (as opposed to <code>height</code> which measures the distance from the top of the peak to y=0). The width argument measures the horizontal span of a single peak. If we provide an estimate for these values at <code>150</code>, <code>100</code>, and <code>60</code> respectively, we'll be able to select out the two peaks we want:</p>
+<p>Each one of the plotted 'x's here is being counted as another individual 'peak'. So, to narrow down our choices, let's start trying to estimate the parameters. Let's try adjusting <code>distance</code>, <code>prominence</code>, and <code>width</code>. The distance argument sets the minimum distance that should exist between two peaks. The <code>prominence</code> argument measures the vertical distance between the top of the peak and the lowest contour line that doesn't enclose a higher peak (as opposed to <code>height</code> which measures the distance from the top of the peak to y=0). The width argument measures the horizontal span of a single peak. If we provide an estimate for these values at <code>150</code>, <code>100</code>, and <code>60</code> respectively, we'll be able to select out the two peaks we want:</p>
 <pre><code class="language-python">x_values = Co_60.iloc[:,0]
 y_values = Co_60.iloc[:,1]
 peaks, _ = find_peaks(y_values, distance=150, prominence=100, width=60)
@@ -580,7 +585,7 @@ for peak in peaks:
     right=min(len(y_values)-1, peak + 60)
     peak_ranges.append(Co_60.iloc[left:right].copy())
 </code></pre>
-<p>Each entry in <code>peak_ranges</code> now holds a slice of data centered around one of the detected peaks. We can plot each of these slices to visually confirm that the correct regions were captured:</p>
+<p>Each entry in <code>peak_ranges</code> now holds a slice of copied data centered around one of the detected peaks. We can plot each of these slices to visually confirm that the correct regions were captured:</p>
 <pre><code class="language-python">for peak in peak_ranges:
     plt.scatter(peak.iloc[:,0], peak.iloc[:,1], s=1)
 plt.title('Isolated peaks')
@@ -590,12 +595,12 @@ plt.show()
 </code></pre>
 <p><strong>Output:</strong></p>
 <p><img alt="found peaks" src="../images/find_peaks_finished.png" /></p>
-<p>This also highlights one of the shortcomings of the <code>find_peaks</code> function. As we can see with the peak on the left, our selection won't necessarily be centered. It found the highest point in the left peak, which happens to be an outlier for the relevant data, and assumes that this point is the center of the peak.</p>
+<p>This also highlights one of the shortcomings of the <code>find_peaks</code> function. As we can see with the peak on the left, our selection won't necessarily be centered. It found the highest point in the left peak, which happens to be an outlier in the data, and assumes that this point is the center of the peak.</p>
 <p>You could then set each peak to a new variable so that it can be used in the next section by using:</p>
 <pre><code class="language-python">Co_60P1 = peak_ranges[0]
 Co_60P2 = peak_ranges[1]
 </code></pre>
-<p>While <code>find_peaks</code> is generally very powerful, it requires careful tuning of multiple parameters. It is also possible to run into plots where the peaks that you see can't easily be distinguished from noise using this module, or where it is impossible to set the parameters to include all peaks, such as when two peaks overlap with each other while others are distinct. There are work arounds for these issues, but it may be better to use another method for isolating your peaks depending on which problems you're running into.</p>
+<p>While <code>find_peaks</code> is generally very powerful, it requires careful tuning of multiple parameters. It is also possible to run into plots where the peaks that you see can't easily be distinguished from noise using this module, or where it is impossible to set the parameters so as to include all peaks, such as when two peaks overlap with each other while others are distinct. There are work arounds for these issues, such as running it multiple times to select peaks with different parameters in the same data, but it may be better to use another method for isolating your peaks depending on which problems you're running into.</p>
 <h2 id="visual-inspection">Visual inspection</h2>
 <p>While it may not be programmatically optimized, one of the easier ways to isolate peaks is by eye: simply estimate where the boundaries of the peaks are and use those numbers to splice the plot. If it's off - adjust your numbers until the peaks are as close to centered as you can get them. If you plot your estimates as you go, you will also be contracting what's shown of the x-axis, providing you with new tick marks with less distance between them, allowing you to splice more accurately.</p>
 <p>Let's try:</p>
@@ -615,7 +620,7 @@ plt.show()
 <p><strong>Output:</strong></p>
 <p><img alt="peak two" src="../images/CoPeak2_1.png" /></p>
 <hr />
-<p>Now that we have our first peaks isolated, <a href="../04_fitting_curves/">click here to continue on to the next section</a> where we'll learn how to fit our data to curves.</p>
+<p>Now that we have our first peaks isolated, <a href="../04_fitting_curves/">click here to continue on to the next section</a> where we'll learn how to fit our data to an equation.</p>
 
 
 
