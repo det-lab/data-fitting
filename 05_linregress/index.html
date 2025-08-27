@@ -388,9 +388,9 @@
 <h1 id="plotting-the-known-data">Plotting the Known Data</h1>
 <p>As mentioned previously, the relationship between the mean channel numbers that we find and the actual emission energy levels should be a linear one. This means that we'll be using the equation of a line:</p>
 <div class="arithmatex">\[y=mx+b\]</div>
-<p>We can now plot our data with the found channel numbers, C, as the y-axis, and the known emission energies, E, as the x-axis, giving us:</p>
+<p>We can now plot our data with the found channel numbers, C, along the y-axis, and the known emission energies, E, along the x-axis, giving us:</p>
 <div class="arithmatex">\[C=mE+b\]</div>
-<p>We should now be able to take our data and fit it to a line with these parameters. After doing this, we should be able to simply plug the mean channel numbers for the peaks of our unknown source into this found equation and compare it to known emission peaks to discover what element it could be.</p>
+<p>We should be able to fit all of our data to this line. After doing this, we can simply plug the mean channel numbers for the peaks of our unknown source into this line to find what the emission energies of the source are, along with an estimate of their uncertainties.</p>
 <p>When we're done finding the peaks of all of our data, our <code>value_bank</code> should look like:</p>
 <pre><code class="language-python">value_bank = {
     ('Na-22', Na_22P1_mu, Na_22P1_mu_uncert, 511),
@@ -416,7 +416,7 @@
     ('Unknown Peak 2', unknown_P2_mu, unknown_P2_mu_uncert)
 }
 </code></pre>
-<p>Now, to plot our known peaks, we'll create a <code>for loop</code> to go through <code>value_bank</code> and separate everything into their own arrays. We'll first initialize our arrays and then append the values into them with our loop. As the uncertainties are pretty small, we'll also want to amplify them so that they'll be visible when plotted. This should be fine as long as we note this exaggeration somewhere in our plot.</p>
+<p>To plot our known peaks, we'll create a <code>for loop</code> to go through <code>value_bank</code> and separate everything into their own arrays. We'll first initialize our arrays and then append the values into them with our loop. As the uncertainties are pretty small, we'll also want to amplify them so that they'll be visible when plotted. This should be fine as long as we note this exaggeration somewhere in our plot.</p>
 <pre><code class="language-python">uncertainty_scale = 50
 labels             = []
 tested_means       = []
@@ -428,7 +428,7 @@ for (label, tested, uncertainty, known) in value_bank:
     tested_uncertainty.append(uncertainty * uncertainty_scale)
     known_peaks.append(known)
 </code></pre>
-<p>With our known_peaks and tested_means now separated, we can use <code>scipy</code>'s <code>linregress</code> to calculate the slope, intercept, and their respective margins of error:</p>
+<p>With <code>known_peaks</code> and <code>tested_means</code> now separated, we can use <code>scipy</code>'s <code>linregress</code> to calculate the slope and intercept of our line, as well as their respective margins of error:</p>
 <pre><code class="language-python">result        = linregress(known_peaks, tested_means)
 slope         = result.slope
 intercept     = result.intercept
@@ -472,7 +472,7 @@ plt.show()
 <h2 id="error-propagation">Error Propagation</h2>
 <p>For a given function:</p>
 <div class="arithmatex">\[f(x_1, x_2,...,x_n)\]</div>
-<p>Where each variable <span class="arithmatex">\(x_i\)</span> has an uncertainty <span class="arithmatex">\(\sigma_{x_i}\)</span>, the uncertainty in f, <span class="arithmatex">\(\sigma_f\)</span> can be found as:</p>
+<p>Where each variable <span class="arithmatex">\(x_i\)</span> has an uncertainty <span class="arithmatex">\(\sigma_{x_i}\)</span>, the uncertainty in f, <span class="arithmatex">\(\sigma_f\)</span>, can be found as:</p>
 <div class="arithmatex">\[\sigma_f = \sqrt{
     (\frac{\delta f}{\delta x_1}\sigma_{x_1}^2) + 
     (\frac{\delta f}{\delta x_2}\sigma_{x_2}^2) + ... + 
