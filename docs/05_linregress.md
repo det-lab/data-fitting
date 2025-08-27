@@ -3,11 +3,11 @@ As mentioned previously, the relationship between the mean channel numbers that 
 
 $$y=mx+b$$
 
-We can now plot our data with the found channel numbers, C, as the y-axis, and the known emission energies, E, as the x-axis, giving us:
+We can now plot our data with the found channel numbers, C, along the y-axis, and the known emission energies, E, along the x-axis, giving us:
 
 $$C=mE+b$$
 
-We should now be able to take our data and fit it to a line with these parameters. After doing this, we should be able to simply plug the mean channel numbers for the peaks of our unknown source into this found equation and compare it to known emission peaks to discover what element it could be.
+We should be able to fit all of our data to this line. After doing this, we can simply plug the mean channel numbers for the peaks of our unknown source into this line to find what the emission energies of the source are, along with an estimate of their uncertainties.
 
 When we're done finding the peaks of all of our data, our `value_bank` should look like:
 ```python
@@ -35,7 +35,7 @@ unknown_values = {
     ('Unknown Peak 2', unknown_P2_mu, unknown_P2_mu_uncert)
 }
 ```
-Now, to plot our known peaks, we'll create a `for loop` to go through `value_bank` and separate everything into their own arrays. We'll first initialize our arrays and then append the values into them with our loop. As the uncertainties are pretty small, we'll also want to amplify them so that they'll be visible when plotted. This should be fine as long as we note this exaggeration somewhere in our plot.
+To plot our known peaks, we'll create a `for loop` to go through `value_bank` and separate everything into their own arrays. We'll first initialize our arrays and then append the values into them with our loop. As the uncertainties are pretty small, we'll also want to amplify them so that they'll be visible when plotted. This should be fine as long as we note this exaggeration somewhere in our plot.
 ```python
 uncertainty_scale = 50
 labels             = []
@@ -48,7 +48,7 @@ for (label, tested, uncertainty, known) in value_bank:
     tested_uncertainty.append(uncertainty * uncertainty_scale)
     known_peaks.append(known)
 ```
-With our known_peaks and tested_means now separated, we can use `scipy`'s `linregress` to calculate the slope, intercept, and their respective margins of error:
+With `known_peaks` and `tested_means` now separated, we can use `scipy`'s `linregress` to calculate the slope and intercept of our line, as well as their respective margins of error:
 ```python
 result        = linregress(known_peaks, tested_means)
 slope         = result.slope
@@ -101,7 +101,7 @@ For a given function:
 
 $$f(x_1, x_2,...,x_n)$$
 
-Where each variable $x_i$ has an uncertainty $\sigma_{x_i}$, the uncertainty in f, $\sigma_f$ can be found as:
+Where each variable $x_i$ has an uncertainty $\sigma_{x_i}$, the uncertainty in f, $\sigma_f$, can be found as:
 
 $$\sigma_f = \sqrt{
     (\frac{\delta f}{\delta x_1}\sigma_{x_1}^2) + 

@@ -49,7 +49,7 @@ unknown_energies = [
     (predicted_energies[1], predicted_uncertainty[1])
 ]
 ```
-Next, we can create a function which takes these arrays as inputs and returns which combination of isotopes is our best fit. Before the nest `for loop` mentioned, we'll want to create an empty array which we can fill with our results. Then, for each choice in `peak_one`, we'll go through each option in `peak_two` and select the observed/predicted energies, their uncertainties, and the candidate energies, loading them all into separate arrays which we can then use to calculate $\chi^2$. We'll load the results into the results array, and then when the loop is completed we will sort it by $\chi^2_{red}$. Then we can run this function and print out the results!
+Next, we can create a function which takes these arrays as inputs and returns which combination of isotopes is our best fit. Before the nested `for loop` mentioned, we'll want to create an empty array which we can fill with our results. Then, for each choice in `peak_one`, we'll go through each option in `peak_two` and select the observed/predicted energies, their uncertainties, and the candidate energies, loading them all into separate arrays which we can then use to calculate $\chi^2$. We'll load the results into the results array, and then when the loop is completed we will sort it by $\chi^2_{red}$. Then we can run this function and print out the results!
 ```python
 def find_best_isotope_pair(unknown_energies, peak_one, peak_two):
     results = []

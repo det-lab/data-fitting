@@ -7,7 +7,7 @@ In `curve_fit`, `f` is our model function. This requires the creation of another
 
 `xdata`, and `ydata` are exactly what they sound like: the x and y data that you're fitting to the model function.
 
-`p0` is the initial guess for the unknown variables/parameters of the model function. It is given as an **array** where every guess is listed in the order that their associated parameters are listed in the function definition (i.e. if the function `f` is: `def function(x, a, b)`, `p0` would be `[a_estimate, b_estimate]`). 
+`p0` is the initial guess for the unknown variables/parameters of the model function. It is given as an **array** where every guess is listed in the order that their associated parameters are listed in the function definition (i.e. if the function `f` is: `def function(x, a, b)`, `p0` would include `[a_estimate, b_estimate]`). 
 
 Let's get started on creating our model function.
 # The Gaussian
@@ -15,7 +15,7 @@ The **Gaussian** (or **Normal**) **Distribution** is a common equation that you'
 
 $$f(x)=\frac{1}{\sqrt{2\pi \sigma^2}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}+D$$
 
-In gamma spectroscopy, we are using the Gaussian as a model for how our detected energy counts are spread around the central photopeak. Variations in the emission and detection of our photons have caused the recorded values to "smear" into a normal distribution, with the most common value being the center of the curve. Fitting our data to this curve then allows us to extract the value for the central energy, $\mu$, as well as its margin of error.
+In gamma spectroscopy, we are using the Gaussian as a model for how our detected energy counts are spread around the central photopeak. Variations in the emission and detection of our photons have caused the recorded values to "smear" into a normal distribution, with the most common value being the center of the curve. Fitting our data to this curve then allows us to extract the value for the central energy, $\mu$, as well as its margin of error/standard deviation, $\sigma$.
 
 In our equation, the first term ($\frac{1}{\sqrt{2\pi \sigma^2}}$) is called the **normalization constant**. Its purpose is to set the value of the integral of a Gaussian curve to be equal to 1, meaning 100% of the data fits under the curve, but this term can actually be dropped for our purposes. We can thus set our equation to be equal to:
 
@@ -27,9 +27,15 @@ In this equation:
 
 * $\mu$ is the **mean value** in the **center** (the energy of the photon)
 
-* $\sigma$ relates to the standard deviation/**thickness** of the line
+* $\sigma$ relates to the standard deviation of the line
 
 * D is the y-offset.
+
+$\sigma$ is one of the more difficult of these variables to estimate unless you are already at least somewhat familiar with the Gaussian distribution. One $\sigma$ can be estimated as a distance from the central $\mu$ value which includes just over one third of the total area under the curve. Keeping the following visual in mind can be very helpful for trying to estimate $\sigma$:
+
+![sigma estimate](https://external-content.duckduckgo.com/iu/?u=https%3A%2F%2Ftikz.net%2Ffiles%2Fgaussians-002.png&f=1&nofb=1&ipt=5d6d4ab1870701868e741e31e56d68c52343f641a01f3d54e25e0263c2321175)
+
+[Image from https://tikz.net/gaussians/]
 
 Let's create a `gaussian` function which simply returns our equation $f(x)$:
 ```python
@@ -40,7 +46,7 @@ Additionally, our data will include some peaks which are so close to each other 
 
 $$f(x)=A_1 \cdot e^{-\frac{(x-\mu_1)^2}{2\sigma^2_1}}+A_2 \cdot e^{-\frac{(x-\mu_2)^2}{2\sigma^2_2}}+...+A_n \cdot e^{-\frac{(x-\mu_n)^2}{2\sigma^2_n}}+D$$
 
-Where `n` is given by the number of overlapping peaks. Luckily, our data shouldn't include more than two overlapping peaks, so we only need to create a function to find the parameters of a double gaussian:
+Where `n` is given by the number of overlapping peaks. Luckily, our data shouldn't include more than two overlapping peaks, so we only need to create a function to find the parameters of a **double** gaussian:
 ```python
 def double_gaussian(x, amp_1, mu_1, sigma_1, amp_2, mu_2, sigma_2, y_offset):
     return (
@@ -49,10 +55,21 @@ def double_gaussian(x, amp_1, mu_1, sigma_1, amp_2, mu_2, sigma_2, y_offset):
         + y_offset
     )
 ```
-# Using `curve_fit`
-Now we can **finally** use `curve_fit` to start extracting values from our data. `curve_fit` can return five different values, `popt`, `pcov`, `infodict`, `mesg`, and `ier`, but only the first two are valuable for our purposes. `popt` is a one dimensional array containing the optimal parameter values, while `pcov` contains a 2-D array with the approximate covariance of `popt`. For the values of the **optimal parameter's uncertainties**, only the square roots of the diagonal values of `pcov` are needed.
+For reference (if you're interested in attempting to find all of the peak fits before continuing to the next section), here is a table with the provided isotopes and the known emission energies of their most prominent photopeaks:
 
-Let's create a function for each of our gaussian functions which will return `popt` and `pcov`. The only difference between these functions will be which equation they call as the model functions:
+|Isotope | Energy (keV)                     |
+|--------|----------------------------------|
+|Na-22   |511, 1274.54                      |
+|Mn-54   |834.84                            |
+|Co-57   |122.06                            |
+|Co-60   |1173.23, 1332.49                  |
+|Cd-109  |88.03                             |
+|Ba-133  |81, 276.4, 302.85, 356.01, 383.85 |
+
+# Using `curve_fit`
+Now we can **finally** use `curve_fit` to start extracting values from our data. `curve_fit` can return five different values, `popt`, `pcov`, `infodict`, `mesg`, and `ier`, but only the first two are valuable for our purposes. `popt` is a one dimensional array containing estimates for the optimal parameter values, while `pcov` contains a 2-D array with estimates for the covariance of `popt`. For the values of the **optimal parameter's uncertainties**, only the square roots of the diagonal values of `pcov` are needed - each entry shows the relationship between each variable with the diagonal values being the relationships of each variable with itself.
+
+Let's create a function for each of our gaussian functions which will return the relevant values of `popt` and `pcov`. The only difference between these functions will be which equation they call as the model functions:
 ```python
 def find_gaussian_values(xdata, ydata, p0):
     return curve_fit(gaussian, xdata, ydata, p0=p0)
@@ -107,7 +124,12 @@ def plot_best_fit(element, emission_peak, xdata, ydata, popt, pcov, d_gaussian=F
     else:
         return mu_1, mu_1_uncertainty, mu_2, mu_2_uncertainty
 ```
-With these functions, we can now run our first `curve_fit` after estimating the amplitude, center channel of the peak, the thickness of the line, and the y-offset:
+With these functions, we can now run our first `curve_fit` after estimating the amplitude, center channel of the peak, the uncertainty, and the y-offset. Let's take a look again at our first isolated curve:
+
+![Co-60 Peak 1](images/CoPeak1_2.png)
+
+To estimate the amplitude, we can subtract a rough estimate of where the bottom of the curve lies on the y-axis from where the top of the curve lies. To estimate the mean channel number, we can simply eyeball where the center of the curve lies. To estimate the standard deviation, we can recall the image from before, and to estimate the y-offset we can view where the bottom of the curve lies on the y-axis once again. Let's go with: `[175, 1750, 20, 50]` for these values.
+
 ```python
 p0=[175, 1750, 20, 50]
 
@@ -134,7 +156,7 @@ Mean: 1747.79 +/- 0.57
 Sigma: 33.09 +/- 2.04
 Y-offset: 54.67 +/- 9.43
 ```
-And for our second peak:
+And we can repeat our steps to estimate the values of our second peak:
 ```python
 p0=[150, 1940, 30, 25]
 
@@ -161,7 +183,7 @@ Mean: 1939.07 +/- 0.43
 Sigma: 39.02 +/- 1.22
 Y-offset: 9.62 +/- 4.18
 ```
-Awesome! You've completed your first `curve_fit` and have found the numbers which we can later associate with the radiation energies. This process has also resulted in us setting the variables `Co_60P1_mu`, `Co_60P1_mu_uncert`, `Co_60P2_mu`, and `Co_60P2_mu_uncert`. 
+Awesome! You've completed your first set of `curve_fit`s and have found the numbers which we can later associate with the radiation energies. This process has also resulted in us setting the variables `Co_60P1_mu`, `Co_60P1_mu_uncert`, `Co_60P2_mu`, and `Co_60P2_mu_uncert`. 
 
 In order to make our work easier later, let's create a new cell at the bottom of our notebook which we'll use to keep a dictionary of all of our elements, their calculated channel numbers and uncertainties, and their associated emission energies (in keV):
 ```python
@@ -170,15 +192,7 @@ value_bank = {
     ('Co-60', Co_60P2_mu, Co_60P2_mu_uncert, 1333),
 }
 ```
-This is where you'll store variables for each of the remaining files emission peaks, which will be used in the next section. For reference (if you're interested in attempting to find peak fits before continuing to the next section), here is a table with the provided isotopes and the known emission energies of their most prominent photopeaks:
-|Isotope | Energy (keV)                     |
-|--------|----------------------------------|
-|Na-22   |511, 1274.54                      |
-|Mn-54   |834.84                            |
-|Co-57   |122.06                            |
-|Co-60   |1173.23, 1332.49                  |
-|Cd-109  |88.03                             |
-|Ba-133  |81, 276.4, 302.85, 356.01, 383.85 |
+This is where you'll store variables for each of the remaining files emission peaks, which will be used in the next section. 
 
 ---
 
