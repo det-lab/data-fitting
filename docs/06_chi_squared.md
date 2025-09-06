@@ -1,7 +1,7 @@
 # What is a $\chi^2$ Fit?
 A $\chi^2$ (or **chi-squared**/**weighted least squares** fit) is a way of fitting a model to data when each point has a different uncertainty. 
 
-If your data points are $(O_i, C_i)$, (where O is your **Observation** data, and C is your **Calculated** or expected data) and each $O_i$ has an uncertainty $\sigma_i$, then the best-fit line **minimizes** the following quantity:
+If your data points are $(O_i, C_i)$, (where O is your **Observation** data, and C is your **Calculated** or expected data) and each $O_i$ has an uncertainty $\sigma_i$, then the best-fit line **minimizes** the quantity:
 
 $$\chi^2 = \sum_{i}(\frac{O_i - C_i}{\sigma_i})^2$$
 
@@ -24,7 +24,7 @@ We'll perform a $\chi^2$ calculation for each possible **pairing** between a pea
 
 $$\chi^2 = (\frac{E_{obs,1}-E_{cand,1}}{\sigma_1})^2 + (\frac{E_{obs,2}-E_{cand,2}}{\sigma_2})^2$$
 
-Because we're not fitting any parameters, only testing two fixed candidate emission energies, the degrees of freedom $\nu$ is simply 2, giving us:
+Because we're not fitting any parameters, only testing two fixed candidate emission energies, the degrees of freedom, $\nu$, is simply 2, giving us:
 
 $$\chi^2_{red}=\frac{\chi^2}{2}$$
 

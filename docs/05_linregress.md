@@ -207,7 +207,7 @@ And for our second peak, we get the matches:
 |Te-121  |1102.15       |164.2 D   |
 |Zn-65   |1115.55       |243.93 D  |
 
-As this information provides us with no overlapping options, this means that we will have to compare each of the first two options against each of the second three options in order to determine which combination of isotopes our source most likely contained.
+As there are no overlapping elements between our first and second peaks, this means that we will have to compare all of the peak one options against peak two options in order to determine which combination of isotopes our source most likely contained.
 
 ---
 

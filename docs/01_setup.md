@@ -1,49 +1,17 @@
 # Setup
-This lesson will be using Python 3 along with several of its more common libraries: `scipy`, `pandas`, `matplotlib`, and `numpy`. This lesson will also be done inside a Jupyter Notebook. 
+This lesson will be using Python 3 along with several of its more common libraries: `scipy`, `pandas`, `matplotlib`, and `numpy`. We will be using Anaconda for our purposes here - Anaconda installs a launcher with Jupyter Notebook as one of the options. Jupyter Notebooks will be used for their cells which make dividing up processes more convenient when working with Python.
 
-First, it'll be necessary to install Python if you don't already have it. You can follow the instructions from [Python's official website](https://realpython.com/installing-python/) in order to get started. 
-
-It's recommended to install Jupyter Notebook through `pip`, so after installing Python you should check that it comes with `pip` installed. This can be done by running the following commands depending on your operating system:
-
-|                           | Linux                        | MacOS                        | Windows                      |
-|---------------------------|------------------------      |------------------------------|------------------------------|
-|**Command (Check python)** |python --version              |python --version              |py --version                  |
-|**Output**                 |Python 3.N.N                  |Python 3.N.N                  |Python 3.N.N                  |
-|**Command (Check pip)**    |python -m pip --version       |python -m pip --version       |py -m pip --version           |
-|**Output**                 |pip X.Y.Z from (python 3.N.N) |pip X.Y.Z from (python 3.N.N) |pip X.Y.Z from (python 3.N.N) |
-
-You can then use `pip` to install either `JupyterLab` or `Jupyter Notebook` with the command:
-```bash
-pip install jupyterlab
-```
-or:
-```bash
-pip install notebook
-```
-You can then run them with either:
-```bash
-jupyter lab
-```
-or:
-```bash
-jupyter notebook
-```
-Jupyter does require the use of an up-to-date browser in order to work. Chrome, Safari, and Firefox are all supported.
-
-Running one of the above commands will then open Jupyter in a browser. 
-
-Jupyter will then show you an in-browser version of your file-explorer where you can navigate to create a new project folder to follow along with this lesson. Before doing that, make sure that you also have the necessary libraries installed. Click on `New` and select `Terminal` in order to ensure that the libraries are installed in the same location that Jupyter has access to. From this terminal, run the commands:
-```bash
-pip install scipy
-pip install pandas
-pip install matplotlib
-pip install numpy
-```
-The `scipy` library will be used to create our curve fits, `pandas` will be used for loading the `.csv` data, `matplotlib` will be used to plot the data, and `numpy` will be used for multiple mathematical expressions.
+To get started downloading Anaconda, follow [this link](https://www.anaconda.com/download). Anaconda is free, and if you don't want to create an account with them click the "skip registration" link inside the "Free Download" box. Don't download "Miniconda", instead, download the full distribution with the Distribution installers for your OS. 
 
 Next, create a folder to house your project files, named something like "data-fitting". After doing this, download and unzip [these raw data files](raw-data/raw-data.zip). Then, you can move the "raw-data" folder into your project folder. 
 
 Finally, create a new notebook by clicking on `New` and `Notebook` and selecting the kernel: `Python 3 (ipykernel)`. You can then either name your project or keep it untitled.
+
+Here's a short video showing the process of opening a Jupyter Notebook and running a code cell (skipping the step of creating a new folder):
+
+<iframe width="560" height="315" src="https://www.youtube.com/watch?v=AMf50_G_Y-A" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+>If you're having trouble loading this video, you may have to open it in a new tab, window, or browser. [Click here](https://www.youtube.com/watch?v=AMf50_G_Y-A) for the link to the video.
 
 ---
 
