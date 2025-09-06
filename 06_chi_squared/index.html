@@ -385,7 +385,7 @@
 
 <h1 id="what-is-a-chi2-fit">What is a <span class="arithmatex">\(\chi^2\)</span> Fit?</h1>
 <p>A <span class="arithmatex">\(\chi^2\)</span> (or <strong>chi-squared</strong>/<strong>weighted least squares</strong> fit) is a way of fitting a model to data when each point has a different uncertainty. </p>
-<p>If your data points are <span class="arithmatex">\((O_i, C_i)\)</span>, (where O is your <strong>Observation</strong> data, and C is your <strong>Calculated</strong> or expected data) and each <span class="arithmatex">\(O_i\)</span> has an uncertainty <span class="arithmatex">\(\sigma_i\)</span>, then the best-fit line <strong>minimizes</strong> the following quantity:</p>
+<p>If your data points are <span class="arithmatex">\((O_i, C_i)\)</span>, (where O is your <strong>Observation</strong> data, and C is your <strong>Calculated</strong> or expected data) and each <span class="arithmatex">\(O_i\)</span> has an uncertainty <span class="arithmatex">\(\sigma_i\)</span>, then the best-fit line <strong>minimizes</strong> the quantity:</p>
 <div class="arithmatex">\[\chi^2 = \sum_{i}(\frac{O_i - C_i}{\sigma_i})^2\]</div>
 <h1 id="why-use-a-chi2-test">Why Use a <span class="arithmatex">\(\chi^2\)</span> Test?</h1>
 <p>Now that we've predicted the emission energies of the unknown peaks and identified possible isotopic matches using gamma emission tables, we need a way to quantify how well each candidate matches our observations. This is where the <span class="arithmatex">\(\chi^2\)</span> test becomes valuable. We are able to run the test by setting <span class="arithmatex">\(O_i\)</span> as the measured energy from the sample, <span class="arithmatex">\(C_i\)</span> as the known emission energy from the candidates, and <span class="arithmatex">\(\sigma_i\)</span> as the uncertainty in <span class="arithmatex">\(O_i\)</span>. This means that we are performing a weighted fit: the smaller an observations uncertainty, the more it will matter for determining the quality of the fit.</p>
@@ -405,7 +405,7 @@
 </ul>
 <p>We'll perform a <span class="arithmatex">\(\chi^2\)</span> calculation for each possible <strong>pairing</strong> between a peak-1 candidate and a peak-2 candidate. The closer <span class="arithmatex">\(\chi^2_{red}\)</span> is to 1, the better the match. Large values indicate a poor match, while very small values might suggest that our uncertainties are too large or that the candidate is suspiciously good. For each of our possible 6 pairs, we'll compare their known emission energies to our observed values. So, for each pair we will compute:</p>
 <div class="arithmatex">\[\chi^2 = (\frac{E_{obs,1}-E_{cand,1}}{\sigma_1})^2 + (\frac{E_{obs,2}-E_{cand,2}}{\sigma_2})^2\]</div>
-<p>Because we're not fitting any parameters, only testing two fixed candidate emission energies, the degrees of freedom <span class="arithmatex">\(\nu\)</span> is simply 2, giving us:</p>
+<p>Because we're not fitting any parameters, only testing two fixed candidate emission energies, the degrees of freedom, <span class="arithmatex">\(\nu\)</span>, is simply 2, giving us:</p>
 <div class="arithmatex">\[\chi^2_{red}=\frac{\chi^2}{2}\]</div>
 <h1 id="implementing-the-chi2-calculation">Implementing the <span class="arithmatex">\(\chi^2\)</span> calculation</h1>
 <p>The first thing that we'll want to do is place our candidate isotopes into arrays so that we can later use nested <code>for loops</code> to compare them all against each other:</p>

@@ -386,68 +386,16 @@
 
 
 <h1 id="setup">Setup</h1>
-<p>This lesson will be using Python 3 along with several of its more common libraries: <code>scipy</code>, <code>pandas</code>, <code>matplotlib</code>, and <code>numpy</code>. This lesson will also be done inside a Jupyter Notebook. </p>
-<p>First, it'll be necessary to install Python if you don't already have it. You can follow the instructions from <a href="https://realpython.com/installing-python/">Python's official website</a> in order to get started. </p>
-<p>It's recommended to install Jupyter Notebook through <code>pip</code>, so after installing Python you should check that it comes with <code>pip</code> installed. This can be done by running the following commands depending on your operating system:</p>
-<table>
-<thead>
-<tr>
-<th></th>
-<th>Linux</th>
-<th>MacOS</th>
-<th>Windows</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td><strong>Command (Check python)</strong></td>
-<td>python --version</td>
-<td>python --version</td>
-<td>py --version</td>
-</tr>
-<tr>
-<td><strong>Output</strong></td>
-<td>Python 3.N.N</td>
-<td>Python 3.N.N</td>
-<td>Python 3.N.N</td>
-</tr>
-<tr>
-<td><strong>Command (Check pip)</strong></td>
-<td>python -m pip --version</td>
-<td>python -m pip --version</td>
-<td>py -m pip --version</td>
-</tr>
-<tr>
-<td><strong>Output</strong></td>
-<td>pip X.Y.Z from (python 3.N.N)</td>
-<td>pip X.Y.Z from (python 3.N.N)</td>
-<td>pip X.Y.Z from (python 3.N.N)</td>
-</tr>
-</tbody>
-</table>
-<p>You can then use <code>pip</code> to install either <code>JupyterLab</code> or <code>Jupyter Notebook</code> with the command:</p>
-<pre><code class="language-bash">pip install jupyterlab
-</code></pre>
-<p>or:</p>
-<pre><code class="language-bash">pip install notebook
-</code></pre>
-<p>You can then run them with either:</p>
-<pre><code class="language-bash">jupyter lab
-</code></pre>
-<p>or:</p>
-<pre><code class="language-bash">jupyter notebook
-</code></pre>
-<p>Jupyter does require the use of an up-to-date browser in order to work. Chrome, Safari, and Firefox are all supported.</p>
-<p>Running one of the above commands will then open Jupyter in a browser. </p>
-<p>Jupyter will then show you an in-browser version of your file-explorer where you can navigate to create a new project folder to follow along with this lesson. Before doing that, make sure that you also have the necessary libraries installed. Click on <code>New</code> and select <code>Terminal</code> in order to ensure that the libraries are installed in the same location that Jupyter has access to. From this terminal, run the commands:</p>
-<pre><code class="language-bash">pip install scipy
-pip install pandas
-pip install matplotlib
-pip install numpy
-</code></pre>
-<p>The <code>scipy</code> library will be used to create our curve fits, <code>pandas</code> will be used for loading the <code>.csv</code> data, <code>matplotlib</code> will be used to plot the data, and <code>numpy</code> will be used for multiple mathematical expressions.</p>
+<p>This lesson will be using Python 3 along with several of its more common libraries: <code>scipy</code>, <code>pandas</code>, <code>matplotlib</code>, and <code>numpy</code>. We will be using Anaconda for our purposes here - Anaconda installs a launcher with Jupyter Notebook as one of the options. Jupyter Notebooks will be used for their cells which make dividing up processes more convenient when working with Python.</p>
+<p>To get started downloading Anaconda, follow <a href="https://www.anaconda.com/download">this link</a>. Anaconda is free, and if you don't want to create an account with them click the "skip registration" link inside the "Free Download" box. Don't download "Miniconda", instead, download the full distribution with the Distribution installers for your OS. </p>
 <p>Next, create a folder to house your project files, named something like "data-fitting". After doing this, download and unzip <a href="../raw-data/raw-data.zip">these raw data files</a>. Then, you can move the "raw-data" folder into your project folder. </p>
 <p>Finally, create a new notebook by clicking on <code>New</code> and <code>Notebook</code> and selecting the kernel: <code>Python 3 (ipykernel)</code>. You can then either name your project or keep it untitled.</p>
+<p>Here's a short video showing the process of opening a Jupyter Notebook and running a code cell (skipping the step of creating a new folder):</p>
+<iframe width="560" height="315" src="https://www.youtube.com/watch?v=AMf50_G_Y-A" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<blockquote>
+<p>If you're having trouble loading this video, you may have to open it in a new tab, window, or browser. <a href="https://www.youtube.com/watch?v=AMf50_G_Y-A">Click here</a> for the link to the video.</p>
+</blockquote>
 <hr />
 <p>Now that we're all setup, <a href="../02_experiment_details/">click here to continue to the next section</a> where we can begin to learn more about the experiment and how it functions before getting started fitting our data.</p>
 
